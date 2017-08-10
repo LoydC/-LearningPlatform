@@ -9,7 +9,7 @@ import com.jeeplus.modules.preview.entity.PreclassDuty;
 /**
  * 预习报告单DAO接口
  * @author loyd
- * @version 2017-08-09
+ * @version 2017-08-10
  */
 @MyBatisDao
 public interface PreclassDutyDao extends CrudDao<PreclassDuty> {

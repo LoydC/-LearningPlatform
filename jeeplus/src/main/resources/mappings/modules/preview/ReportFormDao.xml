@@ -18,7 +18,8 @@
 		a.learning_difficulty AS "learnDifficulty",
 		a.learning_target_degree AS "learnTargerDegree",
 		a.existing_problem AS "existProblem",
-		a.advice AS "advice"
+		a.advice AS "advice",
+		a.user_type AS "createBy.userType"
 	</sql>
 	
 	<sql id="reportFormJoins">
@@ -43,6 +44,29 @@
 			<if test="reportFormNum != null and reportFormNum != ''">
 				AND a.report_form_name = #{reportFormNum}
 			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByTeacher" resultType="ReportForm" >
+		SELECT 
+			<include refid="reportFormColumns"/>
+		FROM preview_report_form a
+		<include refid="reportFormJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="reportFormNum != null and reportFormNum != ''">
+				AND a.report_form_name = #{reportFormNum}
+			</if>
+			AND a.user_type = '1'
+			AND a.course = #{createBy.phone}
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -89,7 +113,8 @@
 			learning_difficulty,
 			learning_target_degree,
 			existing_problem,
-			advice
+			advice,
+			user_type
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -106,7 +131,8 @@
 			#{learnDifficulty},
 			#{learnTargerDegree},
 			#{existProblem},
-			#{advice}
+			#{advice},
+			#{createBy.userType}
 		)
 	</insert>
 	
@@ -123,7 +149,8 @@
 			learning_difficulty = #{learnDifficulty},
 			learning_target_degree = #{learnTargerDegree},
 			existing_problem = #{existProblem},
-			advice = #{advice}
+			advice = #{advice},
+			user_type = #{createBy.userType}
 		WHERE id = #{id}
 	</update>
 	

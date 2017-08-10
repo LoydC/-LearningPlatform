@@ -36,51 +36,6 @@
     <div class="ibox-content">
 	<sys:message content="${message}"/>
 	
-	<!--查询条件-->
-	<div class="row">
-	<div class="col-sm-12">
-	<form:form id="searchForm" modelAttribute="reportForm" action="${ctx}/preview/reportForm/" method="post" class="form-inline">
-		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
-		<div class="form-group">
-			<span>任务单名称：</span>
-				<form:input path="reportFormNum" htmlEscape="false" maxlength="64"  class=" form-control input-sm"/>
-		 </div>	
-	</form:form>
-	<br/>
-	</div>
-	</div>
-	
-	<!-- 工具栏 -->
-	<div class="row">
-	<div class="col-sm-12">
-		<div class="pull-left">
-			<shiro:hasPermission name="preview:reportForm:add">
-				<table:addRow url="${ctx}/preview/reportForm/form" title="预习报告单"></table:addRow><!-- 增加按钮 -->
-			</shiro:hasPermission>
-			<shiro:hasPermission name="preview:reportForm:edit">
-			    <table:editRow url="${ctx}/preview/reportForm/form" title="预习报告单" id="contentTable"></table:editRow><!-- 编辑按钮 -->
-			</shiro:hasPermission>
-			<shiro:hasPermission name="preview:reportForm:del">
-				<table:delRow url="${ctx}/preview/reportForm/deleteAll" id="contentTable"></table:delRow><!-- 删除按钮 -->
-			</shiro:hasPermission>
-			<shiro:hasPermission name="preview:reportForm:import">
-				<table:importExcel url="${ctx}/preview/reportForm/import"></table:importExcel><!-- 导入按钮 -->
-			</shiro:hasPermission>
-			<shiro:hasPermission name="preview:reportForm:export">
-	       		<table:exportExcel url="${ctx}/preview/reportForm/export"></table:exportExcel><!-- 导出按钮 -->
-	       	</shiro:hasPermission>
-	       <button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="sortOrRefresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
-		
-			</div>
-		<div class="pull-right">
-			<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-			<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
-		</div>
-	</div>
-	</div>
-	
 	<!-- 表格 -->
 	<table id="contentTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 		<thead>

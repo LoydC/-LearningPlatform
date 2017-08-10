@@ -124,7 +124,7 @@
 					
 					<td  class="max-width-250">
             			<sys:treeselect id="preclassDutyList{{idx}}_learningResource" name="preclassDutyList[{{idx}}].learningResource.id" value="{{row.learningResource.id}}" 
-							labelName="preclassDutyList{{idx}}.learningResource.resource_name" labelValue="{{row.learningResource.resource_name}}"
+							labelName="preclassDutyList{{idx}}.learningResource.resourceName" labelValue="{{row.learningResource.resourceName}}"
               				title="用户" url="/preview/reportForm/treeData?type=3" cssClass="form-control  required" notAllowSelectParent="true" checked="true"/>
           			</td>
 					

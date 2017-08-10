@@ -36,6 +36,8 @@ import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 import com.jeeplus.modules.filemanagement.service.FileManagementService;
 import com.jeeplus.modules.preview.entity.ReportForm;
 import com.jeeplus.modules.preview.service.ReportFormService;
+import com.jeeplus.modules.sys.entity.User;
+import com.jeeplus.modules.sys.utils.UserUtils;
 
 /**
  * 预习报告单Controller
@@ -73,11 +75,23 @@ public class ReportFormController extends BaseController {
 	@RequiresPermissions("preview:reportForm:list")
 	@RequestMapping(value = {"list", ""})
 	public String list(ReportForm reportForm, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<ReportForm> page = reportFormService.findPage(new Page<ReportForm>(request, response), reportForm); 
+		reportForm.setCreateBy(UserUtils.getUser());
+		Page<ReportForm> page = reportFormService.findPageByTeacher(new Page<ReportForm>(request, response), reportForm); 
 		model.addAttribute("page", page);
 		return "modules/preview/reportFormList";
 	}
 
+	/**
+	 * 学生端查看预习报告单列表页面
+	 */
+	@RequestMapping(value = "student")
+	public String studentList(ReportForm reportForm, HttpServletRequest request, HttpServletResponse response, Model model) {
+		reportForm.setCreateBy(UserUtils.getUser());
+		Page<ReportForm> page = reportFormService.findPageByTeacher(new Page<ReportForm>(request, response), reportForm); 
+		model.addAttribute("page", page);
+		return "modules/preview/studentReportFormList";
+	}
+	
 	/**
 	 * 查看，增加，编辑预习报告单表单页面
 	 */

@@ -9,7 +9,7 @@ import com.jeeplus.common.utils.excel.annotation.ExcelField;
 /**
  * 预习报告单Entity
  * @author loyd
- * @version 2017-08-09
+ * @version 2017-08-10
  */
 public class PreclassDuty extends DataEntity<PreclassDuty> {
 	
