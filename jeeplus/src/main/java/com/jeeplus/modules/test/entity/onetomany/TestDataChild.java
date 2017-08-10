@@ -36,7 +36,7 @@ public class TestDataChild extends DataEntity<TestDataChild> {
 	public TestDataChild(TestDataMain testDataMain){
 		this.testDataMain = testDataMain;
 	}
-
+	
 	@NotNull(message="出发地不能为空")
 	@ExcelField(title="出发地", fieldType=Area.class, value="startArea.name", align=2, sort=1)
 	public Area getStartArea() {

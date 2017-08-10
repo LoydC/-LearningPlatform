@@ -137,6 +137,87 @@
 	<br/>
 	</div>
 	</div>
+	<table border="1">
+     <script>
+        var reportData={
+			reportformID:"101",
+			leaningcontent:"学习内容",
+			leaningData:[
+				{
+					learningResource:"s10101001信息",
+					learningTarget:"理解",
+					questionAndThinking:"问题",
+					doubt:"",
+				},
+				{
+					learningResource:"s10101001信息",
+					learningTarget:"理解",
+					questionAndThinking:"问题",
+					doubt:"",
+				}
+			],
+			practiceDutyData:[
+				{
+					practiceDuty:"信息检索",
+					contentAndTarget:"",
+					doubt:""
+				},
+				{
+					practiceDuty:"信息检索",
+					contentAndTarget:"",
+					doubt:""
+				}
+			],
+			leaningfeedback:"学习反馈",
+			learningfeedbackData:{
+				spendTime:"",
+				learnDifficulty:"",
+				learnTarget:"",
+				existProblem:"",
+				advice:""
+			}
+	}
+        var s = '';
+        s='<h4>学习任务单</h4>'
+        
+        
+            if (reportData.reportformID) {
+                s += '<tr><th>任务单编号</th><th>' + reportData.reportformID 
+                + '</th><th>学习内容</th><th colspan="2">'+reportData.leaningcontent+'</th></tr>';
+            }
+            	s += '<tr><th colspan="5">课前学习任务</th></tr><tr><th>学习资源</th><th>学习目标</th><th colspan="2">问题与思考</th><th>疑问</th></tr>';
+            	if(reportData.leaningData.length>0){
+            		for(var i = 0; i < reportData.leaningData.length; i++){
+            			s += '<tr><th>'
+            			+ reportData.leaningData[i].learningResource + '</th><th>'
+            			+ reportData.leaningData[i].learningTarget + '</th><th colspan="2">'
+            			+ reportData.leaningData[i].questionAndThinking + '</th><th><input type="text">'
+            			+ reportData.leaningData[i].doubt 
+            			+ '</th></tr>'
+            		}           	
+            	}
+            	s += '<tr><th colspan="5">实习前学习任务</th></tr><tr><th>实习任务</th><th colspan="3">内容与目标</th><th>疑问</th></tr>';
+            	if(reportData.practiceDutyData.length>0){
+            		for(var i = 0; i < reportData.practiceDutyData.length; i++){
+            			s += '<tr><th>'
+            			+ reportData.practiceDutyData[i].practiceDuty + '</th><th colspan="3">'
+            			+ reportData.practiceDutyData[i].contentAndTarget + '</th><th><input type="text">'
+            			+ reportData.practiceDutyData[i].doubt 
+            			+ '</th></tr>'            	        	
+            	}
+            	s += '<tr><th colspan="5">学习反馈</th></tr><tr><th>学习花费时间</th><th>学习难度</th><th>学习目标完成度</th><th>存在问题</th><th>建议</th></tr>';
+            	s += '<tr><th><input type="text">'
+            			+ reportData.learningfeedbackData.spendTime + '</th><th><input type="text">'
+            			+ reportData.learningfeedbackData.learnDifficulty + '</th><th><input type="text">'
+            			+ reportData.learningfeedbackData.learnTarget + '</th><th><input type="text">'
+            			+ reportData.learningfeedbackData.existProblem + '</th><th><input type="text">'
+            			+ reportData.learningfeedbackData.advice
+            			+ '</th></tr>'            	         
+            }
+      
+        document.write(s);
+    </script> 
+</table>
 </div>
 </body>
 </html>

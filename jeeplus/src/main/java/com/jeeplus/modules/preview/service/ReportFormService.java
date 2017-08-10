@@ -21,7 +21,7 @@ import com.jeeplus.modules.preview.dao.PrepracticeDutyDao;
 /**
  * 预习报告单Service
  * @author loyd
- * @version 2017-08-06
+ * @version 2017-08-09
  */
 @Service
 @Transactional(readOnly = true)

@@ -118,7 +118,7 @@ public class FileManagementService extends CrudService<FileManagementDao, FileMa
 		root.setText("课程资源");
 		
 		for(EducationResource er : resourceList){
-			String[] path = er.getDisplayPath().split("\\\\");
+			String[] path = er.getDisplayPath().split("/");
 			CourseFile temp = root;
 			for(String p : path){
 				//如果不存在children，new list，新创建一个文件夹并添加

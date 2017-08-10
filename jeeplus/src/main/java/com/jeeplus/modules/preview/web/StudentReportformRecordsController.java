@@ -1,6 +1,7 @@
 package com.jeeplus.modules.preview.web;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,16 +19,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.jeeplus.common.utils.DateUtils;
-import com.jeeplus.common.utils.MyBeanUtils;
 import com.jeeplus.common.config.Global;
 import com.jeeplus.common.persistence.Page;
-import com.jeeplus.common.web.BaseController;
+import com.jeeplus.common.utils.DateUtils;
+import com.jeeplus.common.utils.MyBeanUtils;
 import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.common.utils.excel.ExportExcel;
 import com.jeeplus.common.utils.excel.ImportExcel;
+import com.jeeplus.common.web.BaseController;
+import com.jeeplus.modules.preview.entity.ReportForm;
 import com.jeeplus.modules.preview.entity.StudentReportformRecords;
+import com.jeeplus.modules.preview.service.ReportFormService;
 import com.jeeplus.modules.preview.service.StudentReportformRecordsService;
 
 /**
@@ -41,6 +45,9 @@ public class StudentReportformRecordsController extends BaseController {
 
 	@Autowired
 	private StudentReportformRecordsService studentReportformRecordsService;
+	
+	@Autowired
+	private ReportFormService reportFormService;
 	
 	@ModelAttribute
 	public StudentReportformRecords get(@RequestParam(required=false) String id) {
@@ -65,11 +72,35 @@ public class StudentReportformRecordsController extends BaseController {
 		return "modules/preview/studentReportformRecordsList";
 	}
 
+	/*
+	 * 构造table的json
+	 */
+	@RequestMapping(value = "form")
+	public String buildJson(StudentReportformRecords studentReportformRecords, HttpServletRequest request, HttpServletResponse response, Model model) {
+		
+		String reportId = studentReportformRecords.getReportForm();
+		ReportForm reportForm =  reportFormService.get(reportId);
+		
+		Map<String,Object> map =  studentReportformRecordsService.buildJson(reportForm, studentReportformRecords);
+		
+		String str  = JSON.toJSONString(map);
+		
+		System.out.println(str);
+		
+		
+		model.addAttribute("reportData", map);
+		
+		
+		
+		return "modules/preview/studentReportformRecordsList";
+	}
+	
+	
 	/**
 	 * 查看，增加，编辑学生报告单记录表单页面
 	 */
 	@RequiresPermissions(value={"preview:studentReportformRecords:view","preview:studentReportformRecords:add","preview:studentReportformRecords:edit"},logical=Logical.OR)
-	@RequestMapping(value = "form")
+	//@RequestMapping(value = "form")
 	public String form(StudentReportformRecords studentReportformRecords, Model model) {
 		model.addAttribute("studentReportformRecords", studentReportformRecords);
 		return "modules/preview/studentReportformRecordsForm";

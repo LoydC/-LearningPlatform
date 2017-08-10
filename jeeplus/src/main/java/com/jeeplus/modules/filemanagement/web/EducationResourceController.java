@@ -1,6 +1,8 @@
 package com.jeeplus.modules.filemanagement.web;
 
+import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,14 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
-import com.jeeplus.common.utils.DateUtils;
-import com.jeeplus.common.utils.MyBeanUtils;
 import com.jeeplus.common.config.Global;
 import com.jeeplus.common.persistence.Page;
-import com.jeeplus.common.web.BaseController;
+import com.jeeplus.common.utils.DateUtils;
+import com.jeeplus.common.utils.MyBeanUtils;
 import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.common.utils.excel.ExportExcel;
 import com.jeeplus.common.utils.excel.ImportExcel;
+import com.jeeplus.common.web.BaseController;
 import com.jeeplus.modules.filemanagement.entity.EducationResource;
 import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 
@@ -80,8 +82,23 @@ public class EducationResourceController extends BaseController {
      */
     @RequiresPermissions(value={"filemanagement:educationResource:add","filemanagement:educationResource:edit"},logical=Logical.OR)
     @RequestMapping(value = "save")
-    public String save(EducationResource educationResource, Model model, RedirectAttributes redirectAttributes) throws Exception{
-        if (!beanValidator(model, educationResource)){
+    public String save(@RequestParam("file") MultipartFile file,EducationResource educationResource, Model model, RedirectAttributes redirectAttributes,HttpServletRequest request, HttpServletResponse response) throws Exception{
+        
+    	//上传文件
+    	if (!file.isEmpty()) {
+    		String displayPath = educationResource.getDisplayPath();
+			String path = request.getServletContext().getRealPath("/file/" + displayPath);
+			String filename = file.getOriginalFilename();
+			File filepath = new File(path, filename);
+			if (!filepath.getParentFile().exists()) {
+				filepath.getParentFile().mkdirs();
+			}
+			file.transferTo(new File(path + File.separator + filename));
+
+			educationResource.setServerPath("/file/" + displayPath + filename);
+		}
+    	
+    	if (!beanValidator(model, educationResource)){
             return form(educationResource, model);
         }
         if(!educationResource.getIsNewRecord()){//编辑表单保存
@@ -94,6 +111,7 @@ public class EducationResourceController extends BaseController {
         addMessage(redirectAttributes, "保存教学资源增删改查成功");
         return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
     }
+    
     
     /**
      * 删除教学资源增删改查

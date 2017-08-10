@@ -11,7 +11,14 @@
 		a.del_flag AS "delFlag",
 		a.report_form_name AS "reportFormNum",
 		a.learning_content AS "learningContent",
-		a.course AS "createBy.phone"
+		a.course AS "createBy.phone",
+		a.expand_resources AS "expandResources",
+		a.discussion_topic AS "discussionTopic",
+		a.spend_time AS "spendTime",
+		a.learning_difficulty AS "learnDifficulty",
+		a.learning_target_degree AS "learnTargerDegree",
+		a.existing_problem AS "existProblem",
+		a.advice AS "advice"
 	</sql>
 	
 	<sql id="reportFormJoins">
@@ -36,7 +43,6 @@
 			<if test="reportFormNum != null and reportFormNum != ''">
 				AND a.report_form_name = #{reportFormNum}
 			</if>
-			AND a.course = #{createBy.phone}
 		</where>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -76,7 +82,14 @@
 			del_flag,
 			report_form_name,
 			learning_content,
-			course
+			course,
+			expand_resources,
+			discussion_topic,
+			spend_time,
+			learning_difficulty,
+			learning_target_degree,
+			existing_problem,
+			advice
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -86,7 +99,14 @@
 			#{delFlag},
 			#{reportFormNum},
 			#{learningContent},
-			#{createBy.phone}
+			#{createBy.phone},
+			#{expandResources},
+			#{discussionTopic},
+			#{spendTime},
+			#{learnDifficulty},
+			#{learnTargerDegree},
+			#{existProblem},
+			#{advice}
 		)
 	</insert>
 	
@@ -96,7 +116,14 @@
 			update_date = #{updateDate},
 			report_form_name = #{reportFormNum},
 			learning_content = #{learningContent},
-			course = #{createBy.phone}
+			course = #{createBy.phone},
+			expand_resources = #{expandResources},
+			discussion_topic = #{discussionTopic},
+			spend_time = #{spendTime},
+			learning_difficulty = #{learnDifficulty},
+			learning_target_degree = #{learnTargerDegree},
+			existing_problem = #{existProblem},
+			advice = #{advice}
 		WHERE id = #{id}
 	</update>
 	

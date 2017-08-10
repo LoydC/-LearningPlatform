@@ -81,6 +81,7 @@
 						<form:textarea path="learningContent" htmlEscape="false" rows="4"    class="form-control required"/>
 					</td>
 				</tr>
+
 		 	</tbody>
 		</table>
 		
@@ -89,6 +90,12 @@
 				<li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">课前学习任务：</a>
                 </li>
 				<li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">实习前学习任务：</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">拓展资源</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">讨论主题</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">学习反馈</a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -117,7 +124,7 @@
 					
 					<td  class="max-width-250">
             			<sys:treeselect id="preclassDutyList{{idx}}_learningResource" name="preclassDutyList[{{idx}}].learningResource.id" value="{{row.learningResource.id}}" 
-							labelName="preclassDutyList{{idx}}.learningResource.resourceName" labelValue="{{row.learningResource.resourceName}}"
+							labelName="preclassDutyList{{idx}}.learningResource.resource_name" labelValue="{{row.learningResource.resource_name}}"
               				title="用户" url="/preview/reportForm/treeData?type=3" cssClass="form-control  required" notAllowSelectParent="true" checked="true"/>
           			</td>
 					
@@ -157,7 +164,7 @@
 				<thead>
 					<tr>
 						<th class="hide"></th>
-						<th>实习任务</th>
+						<th>tuo'zh</th>
 						<th>内容与目标</th>
 						<th>疑问</th>
 						<th width="10">&nbsp;</th>
@@ -173,6 +180,9 @@
 						<input id="prepracticeDutyList{{idx}}_delFlag" name="prepracticeDutyList[{{idx}}].delFlag" type="hidden" value="0"/>
 					</td>
 					
+					<td>
+						<textarea id="prepracticeDutyList{{idx}}_prepracticeDuty" name="prepracticeDutyList[{{idx}}].prepracticeDuty" rows="4"    class="form-control required">{{row.prepracticeDuty}}</textarea>
+					</td>
 					
 					
 					<td>
@@ -199,6 +209,97 @@
 					}
 				});
 			</script>
+			</div>
+				<div id="tab-3" class="tab-pane">
+			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th class="hide"></th>
+						<th>拓展资源</th>
+						
+					</tr>
+				</thead>
+				<tbody id="prepracticeDuty">
+					<tr>
+					
+					
+					<td>
+						<form:textarea path="expandResources" htmlEscape="false" rows="4"    class="form-control "/>
+					</td>
+					</tr>
+				</tbody>
+			</table>
+
+			</div>
+			<div id="tab-4" class="tab-pane">
+			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th class="hide"></th>
+						<th>讨论主题</th>
+						
+					</tr>
+				</thead>
+				<tbody id="prepracticeDuty">
+					<tr>
+					
+					
+					<td>
+						<form:textarea path="discussionTopic" htmlEscape="false" rows="4"    class="form-control "/>
+					</td>
+					</tr>
+				</tbody>
+			</table>
+
+			</div>
+			<div id="tab-5" class="tab-pane">
+			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th class="hide"></th>
+						<th>学习花费时间</th>
+						<th>学习难度</th>
+						<th>学习目标完成度</th>
+						<th>存在问题</th>
+						<th>建议</th>
+						
+					</tr>
+				</thead>
+				<tbody id="prepracticeDuty">
+					<tr>
+					
+					
+					<td>
+						<form:select path="spendTime" class="form-control ">
+							<form:option value="" label=""/>
+							<form:options items="${fns:getDictList('learning_spend_time')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select>
+					</td>
+					<td>
+						<form:select path="learnDifficulty" class="form-control ">
+							<form:option value="" label=""/>
+							<form:options items="${fns:getDictList('learning_difficulty')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select>
+					</td>
+					<td>
+						<form:select path="learnTargerDegree" class="form-control ">
+							<form:option value="" label=""/>
+							<form:options items="${fns:getDictList('learning_target_degree')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select>
+					</td>
+					<td>
+						<form:input path="existProblem" htmlEscape="false"    class="form-control "/>
+					</td>
+					<td>
+						<form:input path="advice" htmlEscape="false"    class="form-control "/>
+					</td>
+					</tr>
+				</tbody>
+			</table>
+
 			</div>
 		</div>
 		</div>

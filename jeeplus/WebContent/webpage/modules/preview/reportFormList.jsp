@@ -88,6 +88,13 @@
 				<th> <input type="checkbox" class="i-checks"></th>
 				<th  class="sort-column reportFormNum">任务单名称</th>
 				<th  class="sort-column learningContent">学习内容</th>
+				<th  class="sort-column expandResources">拓展资源</th>
+				<th  class="sort-column discussionTopic">讨论主题</th>
+				<th  class="sort-column spendTime">学习花费时间</th>
+				<th  class="sort-column learnDifficulty">学习难度</th>
+				<th  class="sort-column learnTargerDegree">学习目标完成度</th>
+				<th  class="sort-column existProblem">存在问题</th>
+				<th  class="sort-column advice">建议</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -100,6 +107,27 @@
 				</a></td>
 				<td>
 					${reportForm.learningContent}
+				</td>
+				<td>
+					${reportForm.expandResources}
+				</td>
+				<td>
+					${reportForm.discussionTopic}
+				</td>
+				<td>
+					${fns:getDictLabel(reportForm.spendTime, 'learning_spend_time', '')}
+				</td>
+				<td>
+					${fns:getDictLabel(reportForm.learnDifficulty, 'learning_difficulty', '')}
+				</td>
+				<td>
+					${fns:getDictLabel(reportForm.learnTargerDegree, 'learning_target_degree', '')}
+				</td>
+				<td>
+					${reportForm.existProblem}
+				</td>
+				<td>
+					${reportForm.advice}
 				</td>
 				<td>
 					<shiro:hasPermission name="preview:reportForm:view">

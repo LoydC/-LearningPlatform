@@ -6,10 +6,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.common.web.BaseController;
 import com.jeeplus.modules.filemanagement.entity.EducationResource;
 import com.jeeplus.modules.filemanagement.entity.UserWatchBehavior;
@@ -28,14 +31,30 @@ public class VideoController extends BaseController {
     @Autowired
     private EducationResourceService educationResourceService;
 	
-    @RequestMapping(value = { "list", "" })
-	public String play(String videoId, HttpServletRequest request, HttpServletResponse response,Model model) {
+    @ModelAttribute
+    public EducationResource get(@RequestParam(required=false) String id) {
+        EducationResource entity = null;
+        if (StringUtils.isNotBlank(id)){
+            entity = educationResourceService.get(id);
+        }
+        if (entity == null){
+            entity = new EducationResource();
+        }
+        return entity;
+    }
+    
+    
+    /*
+     * 播放视频
+     */
+    @RequestMapping(value = "play")
+	public String play(EducationResource educationResource, HttpServletRequest request, HttpServletResponse response,Model model) {
 		
-    	EducationResource er = educationResourceService.get(videoId);
+    	//EducationResource er = educationResourceService.get(videoId);
 
-    	model.addAttribute("videoId",er.getId());
-    	model.addAttribute("videoPath","http://video-js.zencoder.com/oceans-clip.mp4");
-		//model.addAttribute("videoPath",er.getServerPath());
+    	model.addAttribute("videoId",educationResource.getId());
+    	//model.addAttribute("videoPath","http://video-js.zencoder.com/oceans-clip.mp4");
+		model.addAttribute("videoPath",educationResource.getServerPath());
 
     	return "modules/filemanagement/video";
 

@@ -35,7 +35,7 @@
     </script>
 </head>
 <body class="hideScroll">
-        <form:form id="inputForm" modelAttribute="educationResource" action="${ctx}/filemanagement/educationResource/save" method="post" class="form-horizontal">
+        <form:form id="inputForm" modelAttribute="educationResource" enctype="multipart/form-data" action="${ctx}/filemanagement/educationResource/save" method="post" class="form-horizontal">
         <form:hidden path="id"/>
         <sys:message content="${message}"/> 
         <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -57,7 +57,7 @@
                     </td>
                     <td class="width-15 active"><label class="pull-right"><font color="red">*</font>服务器路径：</label></td>
                     <td class="width-35">
-                        <form:input path="serverPath" htmlEscape="false"    class="form-control required"/>
+                        <input type="file" name="file">
                     </td>
                 </tr>
                 <tr>

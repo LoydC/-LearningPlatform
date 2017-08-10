@@ -17,17 +17,8 @@
         $(document).ready(function() {
             validateForm = $("#inputForm").validate({
                 submitHandler: function(form){
-                    loading('正在提交，请稍等...');
                     form.submit();
-                },
-                errorContainer: "#messageBox",
-                errorPlacement: function(error, element) {
-                    $("#messageBox").text("输入有误，请先更正。");
-                    if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
-                        error.appendTo(element.parent().parent());
-                    } else {
-                        error.insertAfter(element);
-                    }
+                    parent.openTab("${ctx}/video/play","视频播放",false);
                 }
             });
             
@@ -35,7 +26,7 @@
     </script>
 </head>
 <body class="hideScroll">
-        <form:form id="inputForm" modelAttribute="educationResource" action="${ctx}/filemanagement/educationResource/save" method="post" class="form-horizontal">
+        <form:form id="inputForm" modelAttribute="educationResource" action="${ctx}/filemanagement/fileManagement" target="_blank" method="post" class="form-horizontal">
         <form:hidden path="id"/>
         <sys:message content="${message}"/> 
         <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">

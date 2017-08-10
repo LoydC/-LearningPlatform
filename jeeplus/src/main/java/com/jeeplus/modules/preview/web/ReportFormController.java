@@ -36,13 +36,11 @@ import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 import com.jeeplus.modules.filemanagement.service.FileManagementService;
 import com.jeeplus.modules.preview.entity.ReportForm;
 import com.jeeplus.modules.preview.service.ReportFormService;
-import com.jeeplus.modules.sys.entity.User;
-import com.jeeplus.modules.sys.utils.UserUtils;
 
 /**
  * 预习报告单Controller
  * @author loyd
- * @version 2017-08-06
+ * @version 2017-08-09
  */
 @Controller
 @RequestMapping(value = "${adminPath}/preview/reportForm")
@@ -75,7 +73,6 @@ public class ReportFormController extends BaseController {
 	@RequiresPermissions("preview:reportForm:list")
 	@RequestMapping(value = {"list", ""})
 	public String list(ReportForm reportForm, HttpServletRequest request, HttpServletResponse response, Model model) {
-		reportForm.setCreateBy(UserUtils.getUser());
 		Page<ReportForm> page = reportFormService.findPage(new Page<ReportForm>(request, response), reportForm); 
 		model.addAttribute("page", page);
 		return "modules/preview/reportFormList";
@@ -202,8 +199,7 @@ public class ReportFormController extends BaseController {
 		}
 		return "redirect:"+Global.getAdminPath()+"/preview/reportForm/?repage";
     }
-
-
+	
 	/**
 	 * 获取机构JSON数据。
 	 * 
@@ -251,4 +247,6 @@ public class ReportFormController extends BaseController {
 		return mapList;
 	
 	}
+	
+
 }
