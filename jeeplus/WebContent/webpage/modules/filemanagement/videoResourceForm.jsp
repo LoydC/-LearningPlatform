@@ -18,7 +18,7 @@
             validateForm = $("#inputForm").validate({
                 submitHandler: function(form){
                     form.submit();
-                    parent.openTab("${ctx}/video/play","视频播放",false);
+                    parent.openTab("${ctx}/video/play?videoId=${videoId}&videoPath=${videoPath}","视频播放",false);
                 }
             });
             
@@ -26,7 +26,7 @@
     </script>
 </head>
 <body class="hideScroll">
-        <form:form id="inputForm" modelAttribute="educationResource" action="${ctx}/filemanagement/fileManagement" target="_blank" method="post" class="form-horizontal">
+        <form:form id="inputForm" modelAttribute="educationResource" action="${ctx}/filemanagement/fileManagement/refresh" target="_blank" method="post" class="form-horizontal">
         <form:hidden path="id"/>
         <sys:message content="${message}"/> 
         <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">

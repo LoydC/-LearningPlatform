@@ -1,5 +1,7 @@
 package com.jeeplus.modules.filemanagement.web;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,14 +50,22 @@ public class VideoController extends BaseController {
      * 播放视频
      */
     @RequestMapping(value = "play")
-	public String play(EducationResource educationResource, HttpServletRequest request, HttpServletResponse response,Model model) {
+	public String play(String videoId,String videoPath, HttpServletRequest request, HttpServletResponse response,Model model) {
 		
     	//EducationResource er = educationResourceService.get(videoId);
-
-    	model.addAttribute("videoId",educationResource.getId());
+    	videoPath = "/jeeplus" + videoPath;
+    	try {
+			videoPath= java.net.URLDecoder.decode(videoPath , "UTF-8");	
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} 
+    	
+    	model.addAttribute("videoId",videoId);
     	//model.addAttribute("videoPath","http://video-js.zencoder.com/oceans-clip.mp4");
-		model.addAttribute("videoPath",educationResource.getServerPath());
+		model.addAttribute("videoPath", videoPath);
 
+		System.out.println("videoId：" +videoId + "  videoPath：" + videoPath);
+		
     	return "modules/filemanagement/video";
 
 	}
@@ -66,6 +76,8 @@ public class VideoController extends BaseController {
     @RequestMapping(value = "form")
     public String form(String videoId, HttpServletRequest request, HttpServletResponse response,Model model) {
         model.addAttribute("educationResource", educationResourceService.get(videoId));
+        model.addAttribute("videoId",videoId);
+        model.addAttribute("videoPath",educationResourceService.get(videoId).getServerPath());
         return "modules/filemanagement/videoResourceForm";
     }
     

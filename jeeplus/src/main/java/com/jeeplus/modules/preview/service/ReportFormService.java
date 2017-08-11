@@ -21,7 +21,7 @@ import com.jeeplus.modules.preview.dao.PrepracticeDutyDao;
 /**
  * 预习报告单Service
  * @author loyd
- * @version 2017-08-10
+ * @version 2017-08-11
  */
 @Service
 @Transactional(readOnly = true)
@@ -43,17 +43,14 @@ public class ReportFormService extends CrudService<ReportFormDao, ReportForm> {
 		return super.findList(reportForm);
 	}
 	
+	public Page<ReportForm> findPage(Page<ReportForm> page, ReportForm reportForm) {
+		return super.findPage(page, reportForm);
+	}
+	
 	public Page<ReportForm> findPageByTeacher(Page<ReportForm> page, ReportForm reportForm) {
 		reportForm.setPage(page);
 		page.setList(dao.findListByTeacher(reportForm));
 		return page;
-		
-		
-		//return super.findPage(page, reportForm);
-	}
-	
-	public Page<ReportForm> findPage(Page<ReportForm> page, ReportForm reportForm) {	
-		return super.findPage(page, reportForm);
 	}
 	
 	@Transactional(readOnly = false)

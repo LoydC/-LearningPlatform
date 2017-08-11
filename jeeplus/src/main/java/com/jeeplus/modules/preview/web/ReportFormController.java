@@ -36,13 +36,12 @@ import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 import com.jeeplus.modules.filemanagement.service.FileManagementService;
 import com.jeeplus.modules.preview.entity.ReportForm;
 import com.jeeplus.modules.preview.service.ReportFormService;
-import com.jeeplus.modules.sys.entity.User;
 import com.jeeplus.modules.sys.utils.UserUtils;
 
 /**
  * 预习报告单Controller
  * @author loyd
- * @version 2017-08-09
+ * @version 2017-08-11
  */
 @Controller
 @RequestMapping(value = "${adminPath}/preview/reportForm")
@@ -93,12 +92,29 @@ public class ReportFormController extends BaseController {
 	}
 	
 	/**
+	 * 学生端点击报告单按钮
+	 */
+	@RequestMapping(value = "studentForm")
+	public String studentForm(ReportForm reportForm, Model model) {
+		
+		ReportForm studentReportForm = new ReportForm();
+		studentReportForm.setReportFormNum(reportForm.getReportFormNum());
+		studentReportForm.setLearningContent(reportForm.getLearningContent());
+		studentReportForm.setPreclassDutyList(reportForm.getPreclassDutyList());
+		studentReportForm.setPrepracticeDutyList(reportForm.getPrepracticeDutyList());
+		studentReportForm.setExpandResources(reportForm.getExpandResources());
+		studentReportForm.setDiscussionTopic(reportForm.getDiscussionTopic());
+		model.addAttribute("reportForm", studentReportForm);
+		return "modules/preview/studentReportFormForm";
+	}
+	
+	/**
 	 * 查看，增加，编辑预习报告单表单页面
 	 */
 	@RequiresPermissions(value={"preview:reportForm:view","preview:reportForm:add","preview:reportForm:edit"},logical=Logical.OR)
 	@RequestMapping(value = "form")
 	public String form(ReportForm reportForm, Model model) {
-		model.addAttribute("reportForm", reportForm);
+		model.addAttribute("reportForm", reportForm);	
 		return "modules/preview/reportFormForm";
 	}
 

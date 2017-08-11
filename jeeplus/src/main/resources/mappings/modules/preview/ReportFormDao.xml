@@ -19,7 +19,13 @@
 		a.learning_target_degree AS "learnTargerDegree",
 		a.existing_problem AS "existProblem",
 		a.advice AS "advice",
-		a.user_type AS "createBy.userType"
+		a.user_type AS "createBy.userType",
+		a.score AS "score",
+		a.end_time AS "endTime",
+		a.correct_flag AS "correctFlag",
+		a.a_backup AS "aBackup",
+		a.b_backup AS "bBackup",
+		a.c_backup AS "cBackup"
 	</sql>
 	
 	<sql id="reportFormJoins">
@@ -114,7 +120,13 @@
 			learning_target_degree,
 			existing_problem,
 			advice,
-			user_type
+			user_type,
+			score,
+			end_time,
+			correct_flag,
+			a_backup,
+			b_backup,
+			c_backup
 		) VALUES (
 			#{id},
 			#{createBy.id},
@@ -132,7 +144,13 @@
 			#{learnTargerDegree},
 			#{existProblem},
 			#{advice},
-			#{createBy.userType}
+			#{createBy.userType},
+			#{score},
+			#{endTime},
+			#{correctFlag},
+			#{aBackup},
+			#{bBackup},
+			#{cBackup}
 		)
 	</insert>
 	
@@ -150,7 +168,13 @@
 			learning_target_degree = #{learnTargerDegree},
 			existing_problem = #{existProblem},
 			advice = #{advice},
-			user_type = #{createBy.userType}
+			user_type = #{createBy.userType},
+			score = #{score},
+			end_time = #{endTime},
+			correct_flag = #{correctFlag},
+			a_backup = #{aBackup},
+			b_backup = #{bBackup},
+			c_backup = #{cBackup}
 		WHERE id = #{id}
 	</update>
 	

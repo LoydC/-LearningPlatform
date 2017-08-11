@@ -88,6 +88,8 @@
 				<th> <input type="checkbox" class="i-checks"></th>
 				<th  class="sort-column reportFormNum">任务单名称</th>
 				<th  class="sort-column learningContent">学习内容</th>
+				<th  class="sort-column score">预习报告单成绩</th>
+				<th  class="sort-column endTime">预习报告截止提交时间</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -100,6 +102,12 @@
 				</a></td>
 				<td>
 					${reportForm.learningContent}
+				</td>
+				<td>
+					${fns:getDictLabel(reportForm.score, 'preview_score', '')}
+				</td>
+				<td>
+					<fmt:formatDate value="${reportForm.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
 				<td>
 					<shiro:hasPermission name="preview:reportForm:view">

@@ -2,7 +2,7 @@
 <%@ include file="/webpage/include/taglib.jsp"%>
 <html>
 <head>
-	<title>预习报告单管理</title>
+	<title>学生报告单记录管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		var validateForm;
@@ -31,10 +31,6 @@
 				}
 			});
 			
-					laydate({
-			            elem: '#endTime', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
-			            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
-			        });
 		});
 		function addRow(list, idx, tpl, row){
 			$(list).append(Mustache.render(tpl, {
@@ -76,7 +72,7 @@
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 				<tr>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>任务单名称：</label></td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>任务单de名称：</label></td>
 					<td class="width-35">
 						<form:input path="reportFormNum" htmlEscape="false"    class="form-control required"/>
 					</td>
@@ -85,23 +81,6 @@
 						<form:textarea path="learningContent" htmlEscape="false" rows="4"    class="form-control required"/>
 					</td>
 				</tr>
-
-				<tr>
-					<td class="width-15 active"><label class="pull-right">预习报告单成绩：</label></td>
-					<td class="width-35">
-						<form:select path="score" class="form-control ">
-							<form:option value="" label=""/>
-							<form:options items="${fns:getDictList('preview_score')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-						</form:select>
-					</td>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>预习报告截止提交时间：</label></td>
-					<td class="width-35">
-						<input id="endTime" name="endTime" type="text" maxlength="20" class="laydate-icon form-control layer-date required"
-							value="<fmt:formatDate value="${reportForm.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
-					</td>
-					<td class="width-15 active"></td>
-		   			<td class="width-35" ></td>
-		  		</tr>
 		 	</tbody>
 		</table>
 		
@@ -184,7 +163,7 @@
 				<thead>
 					<tr>
 						<th class="hide"></th>
-						<th>实习任务</th>
+						<th>tuo'zh</th>
 						<th>内容与目标</th>
 						<th>疑问</th>
 						<th width="10">&nbsp;</th>
@@ -290,8 +269,6 @@
 				</thead>
 				<tbody id="prepracticeDuty">
 					<tr>
-					
-					
 					<td>
 						<form:select path="spendTime" class="form-control ">
 							<form:option value="" label=""/>
@@ -320,11 +297,115 @@
 				</tbody>
 			</table>
 
-			</div>			
-			
-			
+			</div>
 		</div>
+		<input type="submit" value="提交"/>
 		</div>
 	</form:form>
+	<!-- <table border="1" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
+     <script>
+        var reportData={
+			id:"0fef607088024832bf781cf0f8d4bddf",
+			leaningcontent:"看视频，看文档，等等",
+			preclassDutyList:[
+				{
+					learningResource:"s10101001信息",
+					learningTarget:"理解",
+					questionAndThinking:"问题",
+					doubt:"",
+				},
+				{
+					learningResource:"s10101001信息",
+					learningTarget:"理解",
+					questionAndThinking:"问题",
+					doubt:"",
+				}
+			],
+			prepracticeDutyList:[
+				{
+					practiceDuty:"信息检索",
+					contentAndTarget:"",
+					doubt:""
+				},
+				{
+					practiceDuty:"信息检索",
+					contentAndTarget:"",
+					doubt:""
+				}
+			],
+				spendTime:"",
+				learnDifficulty:"",
+				learnTarget:"",
+				existProblem:"",
+				advice:""
+	}
+        var s = '';         
+            if (reportData.id ){
+                s += '<tr><th>任务单编号</th><th>' + reportData.id 
+                + '</th><th>学习内容</th><th colspan="2">'+reportData.leaningcontent+'</th></tr>';
+            }
+            	s += '<tr><th colspan="5">课前学习任务</th></tr><tr><th>学习资源</th><th>学习目标</th><th colspan="2">问题与思考</th><th>疑问</th></tr>';
+            	if(reportData.leaningData.length>0){
+            		for(var i = 0; i < reportData.leaningData.length; i++){
+            			s += '<tr><th>'
+            			+ reportData.leaningData[i].learningResource + '</th><th>'
+            			+ reportData.leaningData[i].learningTarget + '</th><th colspan="2">'
+            			+ reportData.leaningData[i].questionAndThinking + '</th><th>'
+            			+ reportData.leaningData[i].doubt 
+            			+ '</th></tr>'
+            		}           	
+            	}
+            	s += '<tr><th colspan="5">实习前学习任务</th></tr><tr><th>实习任务</th><th colspan="3">内容与目标</th><th>疑问</th></tr>';
+            	if(reportData.practiceDutyData.length>0){
+            		for(var i = 0; i < reportData.practiceDutyData.length; i++){
+            			s += '<tr><th>'
+            			+ reportData.practiceDutyData[i].practiceDuty + '</th><th colspan="3">'
+            			+ reportData.practiceDutyData[i].contentAndTarget + '</th><th>'
+            			+ reportData.practiceDutyData[i].doubt 
+            			+ '</th></tr>'            	        	
+            	}
+            	s += '<tr><th colspan="5">学习反馈</th></tr><tr><th>学习花费时间</th><th>学习难度</th><th>学习目标完成度</th><th>存在问题</th><th>建议</th></tr>';
+            	s += '<tr><th>'
+            			+ reportData.learningfeedbackData.spendTime + '</th><th>'
+            			+ reportData.learningfeedbackData.learnDifficulty + '</th><th>'
+            			+ reportData.learningfeedbackData.learnTarget + '</th><th>'
+            			+ reportData.learningfeedbackData.existProblem + '</th><th>'
+            			+ reportData.learningfeedbackData.advice
+            			+ '</th></tr>'            	         
+            }
+              document.write(s);
+    </script>  -->
+<!-- </table>
+<select id="grade">
+  <option value="A">A</option>
+  <option value="B">B</option>
+  <option value="C">C</option>
+  <option value="D">D</option>
+</select>
+<button type="submit" onclick="previewsubmit()">提交</button>
+<script type="text/javascript">
+	function previewsubmit(){
+	alert(reportData);
+	var grade = $('#grade option:selected').val();
+	reportData.advice = grade;
+	alert(grade);
+	
+			$.ajax({
+					type : 'POST',
+					url: '${ctx}/preview/reportForm/correctstudentsforms',
+					headers:{
+					},
+					data:reportData,
+					contentType : 'application/json;charset=utf-8',
+					dataType : 'json',
+					success : function(){
+						
+						alert("保存成功");
+					}
+				})
+				}
+	
+</script> -->
+
 </body>
 </html>

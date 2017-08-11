@@ -52,17 +52,17 @@ public class FileManagementController extends BaseController {
     @Autowired
     private EducationResourceService educationResourceService;
     
-	@ModelAttribute
-	public FileManagement get(@RequestParam(required = false) String id) {
-		FileManagement entity = null;
-		if (StringUtils.isNotBlank(id)) {
-			entity = fileManagementService.get(id);
-		}
-		if (entity == null) {
-			entity = new FileManagement();
-		}
-		return entity;
-	}
+//	@ModelAttribute
+//	public FileManagement get(@RequestParam(required = false) String id) {
+//		FileManagement entity = null;
+//		if (StringUtils.isNotBlank(id)) {
+//			entity = fileManagementService.get(id);
+//		}
+//		if (entity == null) {
+//			entity = new FileManagement();
+//		}
+//		return entity;
+//	}
 
 	/**
 	 * 文件管理列表页面
@@ -80,24 +80,24 @@ public class FileManagementController extends BaseController {
 		//cf1.setUrl(request.getServletContext().getRealPath("/static"));
 		//fileManagementService.traverseFolder(request.getServletContext().getRealPath("/file"), cf1);
 		
-		File root = new File(request.getServletContext().getRealPath("/file"));
-		
-		File[] files = root.listFiles();
-		
-		for (File f : files) {
-			if(f.isDirectory()){
-				CourseFile cf1 = new CourseFile(f.getName(),new State(false));
-				fileManagementService.traverseFolder(f.getAbsolutePath(), cf1);
-				listJson.add(cf1);
-			}else{
-				CourseFile cf1 = new CourseFile(f.getName());
-				listJson.add(cf1);
-			}
-		}
-
-		String jsonString = JSON.toJSONString(listJson);  
-
-		System.out.println(jsonString);
+//		File root = new File(request.getServletContext().getRealPath("/file"));
+//		
+//		File[] files = root.listFiles();
+//		
+//		for (File f : files) {
+//			if(f.isDirectory()){
+//				CourseFile cf1 = new CourseFile(f.getName(),new State(false));
+//				fileManagementService.traverseFolder(f.getAbsolutePath(), cf1);
+//				listJson.add(cf1);
+//			}else{
+//				CourseFile cf1 = new CourseFile(f.getName());
+//				listJson.add(cf1);
+//			}
+//		}
+//
+//		String jsonString = JSON.toJSONString(listJson);  
+//
+//		System.out.println(jsonString);
 		
 		
 		/*开始*/
@@ -140,7 +140,7 @@ public class FileManagementController extends BaseController {
 		/***************开始*****************/
 		List<EducationResource> resourceList = educationResourceService.findList(new EducationResource());
 		CourseFile cf = fileManagementService.getCourseFileList(resourceList);
-		jsonString = JSON.toJSONString(cf);  
+		String jsonString = JSON.toJSONString(cf);  
 
 		System.out.println(jsonString);
 		
@@ -152,6 +152,22 @@ public class FileManagementController extends BaseController {
 
 	}
 
+	/**
+	 * 学生展示列表页面
+	 * 
+	 * @return String
+	 */
+	@RequestMapping(value = "refresh")
+	public String refresh(HttpServletRequest request, HttpServletResponse response,
+			Model model) {
+		List<EducationResource> resourceList = educationResourceService.findList(new EducationResource());
+		CourseFile cf = fileManagementService.getCourseFileList(resourceList);
+		String jsonString = JSON.toJSONString(cf);  
+		
+        model.addAttribute("nodeJson", jsonString);
+		return "modules/filemanagement/fileManagementList";
+	}
+	
 	/**
 	 * 学生展示列表页面
 	 * 

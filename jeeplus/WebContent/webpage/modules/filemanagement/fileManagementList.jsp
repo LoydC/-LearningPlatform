@@ -157,8 +157,15 @@
 		        var videoId = data.node.id;
 		        
 		        var url = '${ctx}/video/form?videoId=' + videoId;
+		        if(data.node.children.length==0){
+		        	if(fileExtension == 'mp4'){
+		        		parent.openVideoResourceDialog("查看视频",url,"400px", "560px");
+			        }else{
+			        	 parent.openNotVideoResourceDialog("查看资源",url,"400px", "560px");
+			        }
+		        	       
+		        }
 		        
-		        parent.openVideoResourceDialog("查看视频",url,"400px", "560px");
 		        
 		          /* if(fileExtension == 'mp4'){
 		        	var url = '${ctx}/video?videoId=' + videoId;

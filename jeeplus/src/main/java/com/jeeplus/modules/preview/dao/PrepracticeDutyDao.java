@@ -7,7 +7,7 @@ import com.jeeplus.modules.preview.entity.PrepracticeDuty;
 /**
  * 预习报告单DAO接口
  * @author loyd
- * @version 2017-08-10
+ * @version 2017-08-11
  */
 @MyBatisDao
 public interface PrepracticeDutyDao extends CrudDao<PrepracticeDuty> {

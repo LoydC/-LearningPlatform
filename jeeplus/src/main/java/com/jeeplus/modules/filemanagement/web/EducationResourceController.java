@@ -95,7 +95,7 @@ public class EducationResourceController extends BaseController {
 			}
 			file.transferTo(new File(path + File.separator + filename));
 
-			educationResource.setServerPath("/file/" + displayPath + filename);
+			educationResource.setServerPath("/file/" + displayPath +"/"+ filename);
 		}
     	
     	if (!beanValidator(model, educationResource)){
@@ -205,7 +205,4 @@ public class EducationResourceController extends BaseController {
         return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
     }
     
-    
-    
-
 }

@@ -50,7 +50,7 @@
 		<c:forEach items="${page.list}" var="reportForm">
 			<tr>
 				<td> <input type="checkbox" id="${reportForm.id}" class="i-checks"></td>
-				<td><a  href="#" onclick="openDialogView('查看预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')">
+				<td><a  href="#" onclick="parent.parentMenuItem('${ctx}/preview/reportForm/studentForm?id=${reportForm.id}','查看预习报告单')">
 					${reportForm.reportFormNum}
 				</a></td>
 				<td>
@@ -61,7 +61,7 @@
 						<a href="#" onclick="openDialogView('查看预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="preview:reportForm:edit">
-    					<a href="#" onclick="openDialog('修改预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+    					<a href="#" onclick="openDialog('修改预习报告单', '${ctx}/preview/reportForm/studentForm?id=${reportForm.id}','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
     				</shiro:hasPermission>
     				<shiro:hasPermission name="preview:reportForm:del">
 						<a href="${ctx}/preview/reportForm/delete?id=${reportForm.id}" onclick="return confirmx('确认要删除该预习报告单吗？', this.href)"   class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
