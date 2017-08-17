@@ -15,4 +15,10 @@ import com.jeeplus.modules.preview.entity.ReportForm;
 public interface ReportFormDao extends CrudDao<ReportForm> {
 
 	public List<ReportForm> findListByTeacher(ReportForm reportForm);
+	
+	public List<ReportForm> findListByStudent(ReportForm reportForm);
+	
+	public ReportForm findUniqueStudentReport(ReportForm reportForm);
+	
+	public ReportForm findBycourseNameandUsertype(ReportForm reportForm);
 }

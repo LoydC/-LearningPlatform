@@ -28,7 +28,7 @@ public class ReportForm extends DataEntity<ReportForm> {
 	private String advice;		// 建议
 	private String score;		// 预习报告单成绩
 	private Date endTime;		// 预习报告截止提交时间
-	private String correctFlag;		// 批改标志
+	private String correctFlag;		//学生姓名
 	private String aBackup;		// 备用字段一
 	private String bBackup;		// 备用字段二
 	private String cBackup;		// 备用字段三

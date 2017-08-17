@@ -206,38 +206,46 @@ window.alert(msg);
 	<table id="contentTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 		<thead>
 			<tr>
-				<th> <input type="checkbox" class="i-checks" ></th>
-				<th  class="sort-column reportFormNum">任务单名称</th>
-				<th  class="sort-column learningContent">学习内容</th>
+				<th> <input type="checkbox" class="i-checks"></th>
+				<th  class="sort-column experimentReportName">名称</th>
+				<th  class="sort-column experimentReportPath">下载实验报告</th>
+				<th  class="sort-column backupFielda">上传实验报告</th>
 				<th  class="sort-column score">成绩</th>
-				<th  class="sort-column endTime">预习报告截止提交时间</th>
+				<th  class="sort-column endTime">截止时间</th>
+				<!-- <th  class="sort-column remarks">备注信息</th> -->
 				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="reportForm" varStatus="status">
-			<tr>
-				<td> <input type="checkbox"  class="i-checks" id="${reportForm.id}"></td>
-				<td><a  href="#" onclick="parent.openTab('${ctx}/preview/reportForm/studentForm?id=${reportForm.id}','查看预习报告单',false)">
-					${reportForm.reportFormNum}
+		<c:forEach items="${page.list}" var="experimentReport" varStatus="status">
+			<tr>							
+				<td> <input type="checkbox" id="${experimentReport.id}" class="i-checks"></td>
+				<td>
+					${experimentReport.experimentReportName}
 				</a></td>
 				<td>
-					${reportForm.learningContent}
+					${experimentReport.experimentReportPath}
 				</td>
 				<td>
-					${fns:getDictLabel(reportForm.score, 'preview_score', '')}
+					<input type="file" name="file"><input type="submit" value="upload"/>${experimentReport.backupFielda}
 				</td>
-				<td >
-					<fmt:formatDate value="${reportForm.endTime}" pattern="yyyy-MM-dd"/>
+				<td>
+					${fns:getDictLabel(experimentReport.score, 'experiment_score', '')}
+				</td>
+				<td>
+					<%-- ${experimentReport.endTime} --%>
+					<fmt:formatDate value="${experimentReport.endTime}" pattern="yyyy-MM-dd"/>
 				</td>
 				<td style="display:none">
 					${reportForm.endTime}
 				</td>
+				<%-- <td>
+					${experimentReport.remarks}
+				</td> --%>
 				<td>
-						<a href="#" onclick="parent.openTab('${ctx}/preview/reportForm/studentForm?id=${reportForm.id}','查看预习报告单',false)" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
-						
-						<button id="${status.index}" onclick="parent.openTab('${ctx}/preview/reportForm/studentForm?id=${reportForm.id}','填写预习报告单',false)" class="btn btn-success btn-xs" display="block"><i class="fa fa-search-plus"></i> 填写</button>
-						<%-- id="${status.index}" --%>
+					<button type="submit">提交</button>
+						<%-- <button id="${status.index}" onclick="parent.openTab('${ctx}/preview/reportForm/studentForm?id=${reportForm.id}','填写预习报告单',false)" class="btn btn-success btn-xs" display="block"><i class="fa fa-search-plus"></i> 填写</button>
+						id="${status.index}"
 						<script type="text/javascript">
 							/* 判断是否在截止时间之前 */
 							compaertime("${status.index}");
@@ -249,7 +257,7 @@ window.alert(msg);
 								}
 							}  
 							iscorrect();
-						</script>
+						</script> --%>
 					
 					<!--<shiro:hasPermission name="preview:reportForm:edit">
     					<a href="#" onclick="openDialog('修改预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>

@@ -9,6 +9,7 @@
 		a.learning_target AS "learningTarget",
 		a.question_and_thinking AS "questionAndThinking",
 		a.doubt AS "doubt",
+		a.learning_resource_text AS "learningResourceText",
 		learningResource.id AS "learningResource.id"
 	</sql>
 	
@@ -70,14 +71,16 @@
 			learning_resource,
 			learning_target,
 			question_and_thinking,
-			doubt
+			doubt,
+			learning_resource_text
 		) VALUES (
 			#{id},
 			#{reportForm.id},
 			#{learningResource.id},
 			#{learningTarget},
 			#{questionAndThinking},
-			#{doubt}
+			#{doubt},
+			#{learningResourceText}
 		)
 	</insert>
 	
@@ -87,7 +90,8 @@
 			learning_resource = #{learningResource.id},
 			learning_target = #{learningTarget},
 			question_and_thinking = #{questionAndThinking},
-			doubt = #{doubt}
+			doubt = #{doubt},
+			learning_resource_text = #{learningResourceText}
 		WHERE id = #{id}
 	</update>
 	

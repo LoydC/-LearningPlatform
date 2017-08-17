@@ -15,10 +15,11 @@ public class PreclassDuty extends DataEntity<PreclassDuty> {
 	
 	private static final long serialVersionUID = 1L;
 	private ReportForm reportForm;		// 预习报告单id 父类
-	private EducationResource learningResource;		// 学习资源
+	private EducationResource learningResource;		// 学习资源id
 	private String learningTarget;		// 学习目标
 	private String questionAndThinking;		// 问题与思考
 	private String doubt;		// 疑问
+	private String learningResourceText;		// 学习资源名称
 	
 	public PreclassDuty() {
 		super();
@@ -40,8 +41,8 @@ public class PreclassDuty extends DataEntity<PreclassDuty> {
 		this.reportForm = reportForm;
 	}
 	
-	@NotNull(message="学习资源不能为空")
-	@ExcelField(title="学习资源", align=2, sort=2)
+	@NotNull(message="学习资源id不能为空")
+	@ExcelField(title="学习资源id", align=2, sort=2)
 	public EducationResource getLearningResource() {
 		return learningResource;
 	}
@@ -75,6 +76,15 @@ public class PreclassDuty extends DataEntity<PreclassDuty> {
 
 	public void setDoubt(String doubt) {
 		this.doubt = doubt;
+	}
+	
+	@ExcelField(title="学习资源名称", align=2, sort=6)
+	public String getLearningResourceText() {
+		return learningResourceText;
+	}
+
+	public void setLearningResourceText(String learningResourceText) {
+		this.learningResourceText = learningResourceText;
 	}
 	
 }

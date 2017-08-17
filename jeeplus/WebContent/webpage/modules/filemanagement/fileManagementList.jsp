@@ -156,11 +156,13 @@
 		        var fileExtension = videoPath.substring(videoPath.lastIndexOf('.') + 1);
 		        var videoId = data.node.id;
 		        
-		        var url = '${ctx}/video/form?videoId=' + videoId;
+		        
 		        if(data.node.children.length==0){
 		        	if(fileExtension == 'mp4'){
+		        		var url = '${ctx}/video/form?videoId=' + videoId;
 		        		parent.openVideoResourceDialog("查看视频",url,"400px", "560px");
 			        }else{
+			        	 var url = '${ctx}/filemanagement/educationResource/downloadForm?id=' + videoId;
 			        	 parent.openNotVideoResourceDialog("查看资源",url,"400px", "560px");
 			        }
 		        	       

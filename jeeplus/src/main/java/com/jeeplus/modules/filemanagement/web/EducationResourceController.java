@@ -1,16 +1,26 @@
 package com.jeeplus.modules.filemanagement.web;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,6 +44,7 @@ import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 
 /**
  * 教学资源Controller
+ * 
  * @author loyd
  * @version 2017-08-05
  */
@@ -41,52 +52,62 @@ import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 @RequestMapping(value = "${adminPath}/filemanagement/educationResource")
 public class EducationResourceController extends BaseController {
 
-    @Autowired
-    private EducationResourceService educationResourceService;
-    
-    @ModelAttribute
-    public EducationResource get(@RequestParam(required=false) String id) {
-        EducationResource entity = null;
-        if (StringUtils.isNotBlank(id)){
-            entity = educationResourceService.get(id);
-        }
-        if (entity == null){
-            entity = new EducationResource();
-        }
-        return entity;
-    }
-    
-    /**
-     * 教学资源增删改查列表页面
-     */
-    @RequiresPermissions("filemanagement:educationResource:list")
-    @RequestMapping(value = {"list", ""})
-    public String list(EducationResource educationResource, HttpServletRequest request, HttpServletResponse response, Model model) {
-        Page<EducationResource> page = educationResourceService.findPage(new Page<EducationResource>(request, response), educationResource); 
-        model.addAttribute("page", page);
-        return "modules/filemanagement/educationResourceList";
-    }
+	@Autowired
+	private EducationResourceService educationResourceService;
 
-    /**
-     * 查看，增加，编辑教学资源增删改查表单页面
-     */
-    @RequiresPermissions(value={"filemanagement:educationResource:view","filemanagement:educationResource:add","filemanagement:educationResource:edit"},logical=Logical.OR)
-    @RequestMapping(value = "form")
-    public String form(EducationResource educationResource, Model model) {
-        model.addAttribute("educationResource", educationResource);
-        return "modules/filemanagement/educationResourceForm";
-    }
+	@ModelAttribute
+	public EducationResource get(@RequestParam(required = false) String id) {
+		EducationResource entity = null;
+		if (StringUtils.isNotBlank(id)) {
+			entity = educationResourceService.get(id);
+		}
+		if (entity == null) {
+			entity = new EducationResource();
+		}
+		return entity;
+	}
 
-    /**
-     * 保存教学资源增删改查
-     */
-    @RequiresPermissions(value={"filemanagement:educationResource:add","filemanagement:educationResource:edit"},logical=Logical.OR)
-    @RequestMapping(value = "save")
-    public String save(@RequestParam("file") MultipartFile file,EducationResource educationResource, Model model, RedirectAttributes redirectAttributes,HttpServletRequest request, HttpServletResponse response) throws Exception{
-        
-    	//上传文件
-    	if (!file.isEmpty()) {
-    		String displayPath = educationResource.getDisplayPath();
+	/**
+	 * 教学资源增删改查列表页面
+	 */
+	@RequiresPermissions("filemanagement:educationResource:list")
+	@RequestMapping(value = { "list", "" })
+	public String list(EducationResource educationResource, HttpServletRequest request, HttpServletResponse response,
+			Model model) {
+		Page<EducationResource> page = educationResourceService.findPage(new Page<EducationResource>(request, response),
+				educationResource);
+		model.addAttribute("page", page);
+		return "modules/filemanagement/educationResourceList";
+	}
+
+	/**
+	 * 查看，增加，编辑教学资源增删改查表单页面
+	 */
+	@RequiresPermissions(value = { "filemanagement:educationResource:view", "filemanagement:educationResource:add",
+			"filemanagement:educationResource:edit" }, logical = Logical.OR)
+	@RequestMapping(value = "form")
+	public String form(@RequestParam(value = "display", required = false, defaultValue = "false") String display,
+			EducationResource educationResource, Model model) {
+		model.addAttribute("educationResource", educationResource);
+		if (display.equals("true"))
+			return "modules/filemanagement/educationResourceDisplayForm";
+		else
+			return "modules/filemanagement/educationResourceForm";
+	}
+
+	/**
+	 * 保存教学资源增删改查
+	 */
+	@RequiresPermissions(value = { "filemanagement:educationResource:add",
+			"filemanagement:educationResource:edit" }, logical = Logical.OR)
+	@RequestMapping(value = "save")
+	public String save(@RequestParam("file") MultipartFile file, EducationResource educationResource, Model model,
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
+
+		// 上传文件
+		if (!file.isEmpty()) {
+			String displayPath = educationResource.getDisplayPath();
 			String path = request.getServletContext().getRealPath("/file/" + displayPath);
 			String filename = file.getOriginalFilename();
 			File filepath = new File(path, filename);
@@ -95,114 +116,172 @@ public class EducationResourceController extends BaseController {
 			}
 			file.transferTo(new File(path + File.separator + filename));
 
-			educationResource.setServerPath("/file/" + displayPath +"/"+ filename);
+			educationResource.setUploadFilename(filename);
+			educationResource.setServerPath("/file/" + displayPath + "/" + filename);
 		}
-    	
-    	if (!beanValidator(model, educationResource)){
-            return form(educationResource, model);
-        }
-        if(!educationResource.getIsNewRecord()){//编辑表单保存
-            EducationResource t = educationResourceService.get(educationResource.getId());//从数据库取出记录的值
-            MyBeanUtils.copyBeanNotNull2Bean(educationResource, t);//将编辑表单中的非NULL值覆盖数据库记录中的值
-            educationResourceService.save(t);//保存
-        }else{//新增表单保存
-            educationResourceService.save(educationResource);//保存
-        }
-        addMessage(redirectAttributes, "保存教学资源增删改查成功");
-        return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
-    }
-    
-    
-    /**
-     * 删除教学资源增删改查
-     */
-    @RequiresPermissions("filemanagement:educationResource:del")
-    @RequestMapping(value = "delete")
-    public String delete(EducationResource educationResource, RedirectAttributes redirectAttributes) {
-        educationResourceService.delete(educationResource);
-        addMessage(redirectAttributes, "删除教学资源增删改查成功");
-        return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
-    }
-    
-    /**
-     * 批量删除教学资源增删改查
-     */
-    @RequiresPermissions("filemanagement:educationResource:del")
-    @RequestMapping(value = "deleteAll")
-    public String deleteAll(String ids, RedirectAttributes redirectAttributes) {
-        String idArray[] =ids.split(",");
-        for(String id : idArray){
-            educationResourceService.delete(educationResourceService.get(id));
-        }
-        addMessage(redirectAttributes, "删除教学资源增删改查成功");
-        return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
-    }
-    
-    /**
-     * 导出excel文件
-     */
-    @RequiresPermissions("filemanagement:educationResource:export")
-    @RequestMapping(value = "export", method=RequestMethod.POST)
-    public String exportFile(EducationResource educationResource, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-        try {
-            String fileName = "教学资源增删改查"+DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
-            Page<EducationResource> page = educationResourceService.findPage(new Page<EducationResource>(request, response, -1), educationResource);
-            new ExportExcel("教学资源增删改查", EducationResource.class).setDataList(page.getList()).write(response, fileName).dispose();
-            return null;
-        } catch (Exception e) {
-            addMessage(redirectAttributes, "导出教学资源增删改查记录失败！失败信息："+e.getMessage());
-        }
-        return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
-    }
 
-    /**
-     * 导入Excel数据
+		if (!beanValidator(model, educationResource)) {
+			return form("false", educationResource, model);
+		}
+		if (!educationResource.getIsNewRecord()) {// 编辑表单保存
+			EducationResource t = educationResourceService.get(educationResource.getId());// 从数据库取出记录的值
+			MyBeanUtils.copyBeanNotNull2Bean(educationResource, t);// 将编辑表单中的非NULL值覆盖数据库记录中的值
+			educationResourceService.save(t);// 保存
+		} else {// 新增表单保存
+			educationResourceService.save(educationResource);// 保存
+		}
+		addMessage(redirectAttributes, "保存教学资源增删改查成功");
+		return "redirect:" + Global.getAdminPath() + "/filemanagement/educationResource/?repage";
+	}
 
-     */
-    @RequiresPermissions("filemanagement:educationResource:import")
-    @RequestMapping(value = "import", method=RequestMethod.POST)
-    public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
-        try {
-            int successNum = 0;
-            int failureNum = 0;
-            StringBuilder failureMsg = new StringBuilder();
-            ImportExcel ei = new ImportExcel(file, 1, 0);
-            List<EducationResource> list = ei.getDataList(EducationResource.class);
-            for (EducationResource educationResource : list){
-                try{
-                    educationResourceService.save(educationResource);
-                    successNum++;
-                }catch(ConstraintViolationException ex){
-                    failureNum++;
-                }catch (Exception ex) {
-                    failureNum++;
-                }
-            }
-            if (failureNum>0){
-                failureMsg.insert(0, "，失败 "+failureNum+" 条教学资源增删改查记录。");
-            }
-            addMessage(redirectAttributes, "已成功导入 "+successNum+" 条教学资源增删改查记录"+failureMsg);
-        } catch (Exception e) {
-            addMessage(redirectAttributes, "导入教学资源增删改查失败！失败信息："+e.getMessage());
-        }
-        return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
-    }
-    
-    /**
-     * 下载导入教学资源增删改查数据模板
-     */
-    @RequiresPermissions("filemanagement:educationResource:import")
-    @RequestMapping(value = "import/template")
-    public String importFileTemplate(HttpServletResponse response, RedirectAttributes redirectAttributes) {
-        try {
-            String fileName = "教学资源增删改查数据导入模板.xlsx";
-            List<EducationResource> list = Lists.newArrayList(); 
-            new ExportExcel("教学资源增删改查数据", EducationResource.class, 1).setDataList(list).write(response, fileName).dispose();
-            return null;
-        } catch (Exception e) {
-            addMessage(redirectAttributes, "导入模板下载失败！失败信息："+e.getMessage());
-        }
-        return "redirect:"+Global.getAdminPath()+"/filemanagement/educationResource/?repage";
-    }
-    
+	/*
+	 * 下载教学资源页面
+	 */
+	@RequestMapping(value = "downloadForm")
+	public String downloadForm(
+			@RequestParam(value = "display", required = false, defaultValue = "false") String display,
+			EducationResource educationResource, Model model) {
+		model.addAttribute("educationResource", educationResource);
+		return "modules/filemanagement/downloadResourceForm";
+	}
+
+	/*
+	 * 下载学习资源
+	 */
+	@RequestMapping(value = "download")
+	private ResponseEntity<byte[]> download(EducationResource educationResource, HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			if (educationResource != null && !educationResource.getServerPath().equals("")) {
+				String path = request.getServletContext().getRealPath(educationResource.getServerPath());
+				File file = new File(path);
+				String fileName = educationResource.getUploadFilename();
+				if (file.exists()) {
+					OutputStream os = new BufferedOutputStream(response.getOutputStream());  
+					response.setContentType("application/octet-stream");  
+
+	                  
+	                response.setHeader("Content-disposition", "attachment; filename="  
+	                        + new String(fileName.getBytes("utf-8"), "ISO8859-1")); // 指定下载的文件名  
+	                os.write(FileUtils.readFileToByteArray(file));  
+	                os.flush();  
+					
+					
+					
+					
+//					HttpHeaders headers = new HttpHeaders();
+//					String downloadFileName = new String(educationResource.getUploadFilename().getBytes("UTF-8"),"iso-8859-1");
+//					headers.setContentDispositionFormData("attachment", downloadFileName);
+//					headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//					return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
+				}
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * 删除教学资源增删改查
+	 */
+	@RequiresPermissions("filemanagement:educationResource:del")
+	@RequestMapping(value = "delete")
+	public String delete(EducationResource educationResource, RedirectAttributes redirectAttributes) {
+		educationResourceService.delete(educationResource);
+		addMessage(redirectAttributes, "删除教学资源增删改查成功");
+		return "redirect:" + Global.getAdminPath() + "/filemanagement/educationResource/?repage";
+	}
+
+	/**
+	 * 批量删除教学资源增删改查
+	 */
+	@RequiresPermissions("filemanagement:educationResource:del")
+	@RequestMapping(value = "deleteAll")
+	public String deleteAll(String ids, RedirectAttributes redirectAttributes) {
+		String idArray[] = ids.split(",");
+		for (String id : idArray) {
+			educationResourceService.delete(educationResourceService.get(id));
+		}
+		addMessage(redirectAttributes, "删除教学资源增删改查成功");
+		return "redirect:" + Global.getAdminPath() + "/filemanagement/educationResource/?repage";
+	}
+
+	/**
+	 * 导出excel文件
+	 */
+	@RequiresPermissions("filemanagement:educationResource:export")
+	@RequestMapping(value = "export", method = RequestMethod.POST)
+	public String exportFile(EducationResource educationResource, HttpServletRequest request,
+			HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "教学资源增删改查" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			Page<EducationResource> page = educationResourceService
+					.findPage(new Page<EducationResource>(request, response, -1), educationResource);
+			new ExportExcel("教学资源增删改查", EducationResource.class).setDataList(page.getList()).write(response, fileName)
+					.dispose();
+			return null;
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导出教学资源增删改查记录失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + Global.getAdminPath() + "/filemanagement/educationResource/?repage";
+	}
+
+	/**
+	 * 导入Excel数据
+	 * 
+	 */
+	@RequiresPermissions("filemanagement:educationResource:import")
+	@RequestMapping(value = "import", method = RequestMethod.POST)
+	public String importFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+		try {
+			int successNum = 0;
+			int failureNum = 0;
+			StringBuilder failureMsg = new StringBuilder();
+			ImportExcel ei = new ImportExcel(file, 1, 0);
+			List<EducationResource> list = ei.getDataList(EducationResource.class);
+			for (EducationResource educationResource : list) {
+				try {
+					educationResourceService.save(educationResource);
+					successNum++;
+				} catch (ConstraintViolationException ex) {
+					failureNum++;
+				} catch (Exception ex) {
+					failureNum++;
+				}
+			}
+			if (failureNum > 0) {
+				failureMsg.insert(0, "，失败 " + failureNum + " 条教学资源增删改查记录。");
+			}
+			addMessage(redirectAttributes, "已成功导入 " + successNum + " 条教学资源增删改查记录" + failureMsg);
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导入教学资源增删改查失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + Global.getAdminPath() + "/filemanagement/educationResource/?repage";
+	}
+
+	/**
+	 * 下载导入教学资源增删改查数据模板
+	 */
+	@RequiresPermissions("filemanagement:educationResource:import")
+	@RequestMapping(value = "import/template")
+	public String importFileTemplate(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "教学资源增删改查数据导入模板.xlsx";
+			List<EducationResource> list = Lists.newArrayList();
+			new ExportExcel("教学资源增删改查数据", EducationResource.class, 1).setDataList(list).write(response, fileName)
+					.dispose();
+			return null;
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + Global.getAdminPath() + "/filemanagement/educationResource/?repage";
+	}
+
 }

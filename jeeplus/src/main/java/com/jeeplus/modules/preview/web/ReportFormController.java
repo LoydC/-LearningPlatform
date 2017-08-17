@@ -1,5 +1,6 @@
 package com.jeeplus.modules.preview.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +35,11 @@ import com.jeeplus.modules.filemanagement.entity.CourseFile;
 import com.jeeplus.modules.filemanagement.entity.EducationResource;
 import com.jeeplus.modules.filemanagement.service.EducationResourceService;
 import com.jeeplus.modules.filemanagement.service.FileManagementService;
+import com.jeeplus.modules.preview.entity.PreclassDuty;
+import com.jeeplus.modules.preview.entity.PrepracticeDuty;
 import com.jeeplus.modules.preview.entity.ReportForm;
 import com.jeeplus.modules.preview.service.ReportFormService;
+import com.jeeplus.modules.sys.entity.User;
 import com.jeeplus.modules.sys.utils.UserUtils;
 
 /**
@@ -81,12 +85,26 @@ public class ReportFormController extends BaseController {
 	}
 
 	/**
+	 * 显示报告单对应的所有学生的报告
+	 */
+	@RequestMapping(value = "findAllReport")
+	public String findAllReport(ReportForm reportForm, HttpServletRequest request, HttpServletResponse response, Model model) {	
+		Page<ReportForm> page = reportFormService.findPageByStudent(new Page<ReportForm>(request, response), reportForm); 
+		model.addAttribute("page", page);
+		return "modules/preview/allStudentreportFormList";
+	}
+		
+
+	/**
 	 * 学生端查看预习报告单列表页面
 	 */
 	@RequestMapping(value = "student")
 	public String studentList(ReportForm reportForm, HttpServletRequest request, HttpServletResponse response, Model model) {
+		
 		reportForm.setCreateBy(UserUtils.getUser());
 		Page<ReportForm> page = reportFormService.findPageByTeacher(new Page<ReportForm>(request, response), reportForm); 
+		page.setList(reportFormService.convertTracherList(page.getList()));
+	
 		model.addAttribute("page", page);
 		return "modules/preview/studentReportFormList";
 	}
@@ -97,21 +115,26 @@ public class ReportFormController extends BaseController {
 	@RequestMapping(value = "studentForm")
 	public String studentForm(ReportForm reportForm, Model model) {
 		
-		ReportForm studentReportForm = new ReportForm();
-		studentReportForm.setReportFormNum(reportForm.getReportFormNum());
-		studentReportForm.setLearningContent(reportForm.getLearningContent());
-		studentReportForm.setPreclassDutyList(reportForm.getPreclassDutyList());
-		studentReportForm.setPrepracticeDutyList(reportForm.getPrepracticeDutyList());
-		studentReportForm.setExpandResources(reportForm.getExpandResources());
-		studentReportForm.setDiscussionTopic(reportForm.getDiscussionTopic());
-		model.addAttribute("reportForm", studentReportForm);
+		//创建查询的RF
+		ReportForm queryRF  = new ReportForm();
+		queryRF.setReportFormNum(reportForm.getReportFormNum());
+		queryRF.setCreateBy(UserUtils.getUser());
+		
+		//根据查询条件，找到那个学生RF（或者为空）
+		ReportForm findRF = reportFormService.findUniqueStudentReport(queryRF);
+		
+		//再次处理一下找到的RF，若为空重新new
+		findRF = reportFormService.createStudentForm(findRF, reportForm);
+		
+		model.addAttribute("reportForm", findRF);
+
 		return "modules/preview/studentReportFormForm";
 	}
 	
 	/**
 	 * 查看，增加，编辑预习报告单表单页面
 	 */
-	@RequiresPermissions(value={"preview:reportForm:view","preview:reportForm:add","preview:reportForm:edit"},logical=Logical.OR)
+//	@RequiresPermissions(value={"preview:reportForm:view","preview:reportForm:add","preview:reportForm:edit"},logical=Logical.OR)
 	@RequestMapping(value = "form")
 	public String form(ReportForm reportForm, Model model) {
 		model.addAttribute("reportForm", reportForm);	
@@ -121,9 +144,24 @@ public class ReportFormController extends BaseController {
 	/**
 	 * 保存预习报告单
 	 */
-	@RequiresPermissions(value={"preview:reportForm:add","preview:reportForm:edit"},logical=Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(ReportForm reportForm, Model model, RedirectAttributes redirectAttributes) throws Exception{
+				
+		List<PreclassDuty> preClassList =  reportForm.getPreclassDutyList();
+		
+		if(preClassList != null && preClassList.size() != 0 && preClassList.get(0).getLearningResource() != null){	
+			for(PreclassDuty pd : preClassList){
+				String[] resourceIds = pd.getLearningResource().getId().split(",");
+				StringBuilder sb = new StringBuilder();
+				for(String id : resourceIds){
+					sb.append(educationResourceService.get(id).getResourceName() + " ");
+				}
+				pd.setLearningResourceText(sb.toString());
+			}
+		}
+		
+		reportForm.setPreclassDutyList(preClassList);
+			
 		if (!beanValidator(model, reportForm)){
 			return form(reportForm, model);
 		}
@@ -135,7 +173,39 @@ public class ReportFormController extends BaseController {
 			reportFormService.save(reportForm);//保存
 		}
 		addMessage(redirectAttributes, "保存预习报告单成功");
-		return "redirect:"+Global.getAdminPath()+"/preview/reportForm/?repage";
+		
+		if(reportForm.getCreateBy().getUserType().equals("3")){
+			return "redirect:"+Global.getAdminPath()+"/preview/reportForm";
+		}else{
+			return "redirect:"+Global.getAdminPath()+"/preview/reportForm/findAllReport?id="+reportForm.getId();
+		}
+		
+	}
+	
+
+	/**
+	 * 保存预习报告单
+	 */
+	@RequestMapping(value = "studentSave")
+	public String studentSave(ReportForm reportForm, Model model, RedirectAttributes redirectAttributes) throws Exception{		
+		if (!beanValidator(model, reportForm)){
+			return studentForm(reportForm, model);
+		}
+		if(!reportForm.getIsNewRecord()){//编辑表单保存
+			ReportForm t = reportFormService.get(reportForm.getId());//从数据库取出记录的值
+			MyBeanUtils.copyBeanNotNull2Bean(reportForm, t);//将编辑表单中的非NULL值覆盖数据库记录中的值
+			reportFormService.save(t);//保存
+		}else{//新增表单保存
+			reportForm.setCorrectFlag(UserUtils.getUser().getName());
+			
+			reportFormService.save(reportForm);//保存
+			ReportForm form = reportFormService.findBycourseNameandUsertype(reportForm);
+			form.setCorrectFlag("1");
+			reportFormService.save(form);//保存
+			
+		}
+		addMessage(redirectAttributes, "保存预习报告单成功");
+		return "redirect:"+Global.getAdminPath()+"/preview/reportForm/student?repage";
 	}
 	
 	/**

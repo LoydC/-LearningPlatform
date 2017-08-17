@@ -65,12 +65,7 @@
 			<shiro:hasPermission name="preview:reportForm:del">
 				<table:delRow url="${ctx}/preview/reportForm/deleteAll" id="contentTable"></table:delRow><!-- 删除按钮 -->
 			</shiro:hasPermission>
-			<shiro:hasPermission name="preview:reportForm:import">
-				<table:importExcel url="${ctx}/preview/reportForm/import"></table:importExcel><!-- 导入按钮 -->
-			</shiro:hasPermission>
-			<shiro:hasPermission name="preview:reportForm:export">
-	       		<table:exportExcel url="${ctx}/preview/reportForm/export"></table:exportExcel><!-- 导出按钮 -->
-	       	</shiro:hasPermission>
+			
 	       <button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="sortOrRefresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 		
 			</div>
@@ -88,13 +83,13 @@
 				<th> <input type="checkbox" class="i-checks"></th>
 				<th  class="sort-column reportFormNum">任务单名称</th>
 				<th  class="sort-column learningContent">学习内容</th>
-				<th  class="sort-column score">预习报告单成绩</th>
-				<th  class="sort-column endTime">预习报告截止提交时间</th>
+				<th  class="sort-column score">报告单提交状态</th>
+				<th  class="sort-column endTime">截止提交时间</th>
 				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="reportForm">
+		<c:forEach items="${page.list}" var="reportForm" varStatus="status">
 			<tr>
 				<td> <input type="checkbox" id="${reportForm.id}" class="i-checks"></td>
 				<td><a  href="#" onclick="openDialogView('查看预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')">
@@ -107,18 +102,26 @@
 					${fns:getDictLabel(reportForm.score, 'preview_score', '')}
 				</td>
 				<td>
-					<fmt:formatDate value="${reportForm.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${reportForm.endTime}" pattern="yyyy-MM-dd"/>
 				</td>
 				<td>
 					<shiro:hasPermission name="preview:reportForm:view">
 						<a href="#" onclick="openDialogView('查看预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="preview:reportForm:edit">
-    					<a href="#" onclick="openDialog('修改预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+    					<a  href="#" id="${status.index}" display="block" onclick="openDialog('修改预习报告单', '${ctx}/preview/reportForm/form?id=${reportForm.id}','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+    					<script type="text/javascript">
+    						 var correctfalg = "${reportForm.correctFlag}";
+    						 if(correctfalg!=""){
+    						 	document.getElementById(${status.index}).style.display="none";
+    						 }
+    						 
+    					</script>
     				</shiro:hasPermission>
     				<shiro:hasPermission name="preview:reportForm:del">
 						<a href="${ctx}/preview/reportForm/delete?id=${reportForm.id}" onclick="return confirmx('确认要删除该预习报告单吗？', this.href)"   class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 					</shiro:hasPermission>
+    					<a href="#" onclick="parent.openTab('${ctx}/preview/reportForm/findAllReport?id=${reportForm.id}','批改预习报告单',false)" class="btn btn-warning btn-xs" ><i class="fa fa-edit"></i> 批改</a>
 				</td>
 			</tr>
 		</c:forEach>

@@ -71,9 +71,77 @@
 			<if test="reportFormNum != null and reportFormNum != ''">
 				AND a.report_form_name = #{reportFormNum}
 			</if>
+			AND a.user_type = '1' OR a.user_type = '2' 
+			AND a.course = #{createBy.phone}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="findListByStudent" resultType="ReportForm" >
+		SELECT 
+			<include refid="reportFormColumns"/>
+		FROM preview_report_form a
+		<include refid="reportFormJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="reportFormNum != null and reportFormNum != ''">
+				AND a.report_form_name = #{reportFormNum}
+			</if>
+			AND a.user_type = '3'
+			AND a.course = #{createBy.phone}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findBycourseNameandUsertype" resultType="ReportForm">
+		SELECT
+			<include refid="reportFormColumns"/>
+		FROM preview_report_form a
+		<include refid="reportFormJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="reportFormNum != null and reportFormNum != ''">
+				AND a.report_form_name = #{reportFormNum}
+			</if>
 			AND a.user_type = '1'
 			AND a.course = #{createBy.phone}
 		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findUniqueStudentReport" resultType="ReportForm" >
+		SELECT 
+			<include refid="reportFormColumns"/>
+		FROM preview_report_form a
+		<include refid="reportFormJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.report_form_name = #{reportFormNum}
+			AND a.course = #{createBy.phone}
+			AND a.create_by = #{createBy.id}
+		</where>		
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

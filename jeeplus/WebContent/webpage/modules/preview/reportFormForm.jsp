@@ -78,11 +78,11 @@
 				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>任务单名称：</label></td>
 					<td class="width-35">
-						<form:input path="reportFormNum" htmlEscape="false"    class="form-control required"/>
+						<form:input path="reportFormNum" htmlEscape="false"    class="form-control required" />
 					</td>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>学习内容：</label></td>
 					<td class="width-35">
-						<form:textarea path="learningContent" htmlEscape="false" rows="4"    class="form-control required"/>
+						<form:textarea path="learningContent" htmlEscape="false" rows="4"    class="form-control required" />
 					</td>
 				</tr>
 
@@ -142,10 +142,8 @@
 						<input id="preclassDutyList{{idx}}_delFlag" name="preclassDutyList[{{idx}}].delFlag" type="hidden" value="0"/>
 					</td>
 					
-					<td  class="max-width-250">
-            			<sys:treeselect id="preclassDutyList{{idx}}_learningResource" name="preclassDutyList[{{idx}}].learningResource.id" value="{{row.learningResource.id}}" 
-							labelName="preclassDutyList{{idx}}.learningResource.resourceName" labelValue="{{row.learningResource.resourceName}}"
-              				title="用户" url="/preview/reportForm/treeData?type=3" cssClass="form-control  required" notAllowSelectParent="true" checked="true"/>
+					<td>
+            			<textarea id="preclassDutyList{{idx}}_learningResourceText" name="preclassDutyList[{{idx}}].learningResourceText" rows="4"    class="form-control required">{{row.learningResourceText}}</textarea>
           			</td>
 					
 					<td>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.experimentreport.dao.ExperimentReportDao">
+    
+	<sql id="experimentReportColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.experiment_report_name AS "experimentReportName",
+		a.experiment_report_path AS "experimentReportPath",
+		a.score AS "score",
+		a.end_time AS "endTime",
+		a.user_type AS "userType",
+		a.backup_fielda AS "backupFielda",
+		a.backup_fieldb AS "backupFieldb",
+		a.backup_fieldc AS "createBy.phone",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="experimentReportJoins">
+	</sql>
+	
+    
+	<select id="get" resultType="ExperimentReport" >
+		SELECT 
+			<include refid="experimentReportColumns"/>
+		FROM experiment_report a
+		<include refid="experimentReportJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ExperimentReport" >
+		SELECT 
+			<include refid="experimentReportColumns"/>
+		FROM experiment_report a
+		<include refid="experimentReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ExperimentReport" >
+		SELECT 
+			<include refid="experimentReportColumns"/>
+		FROM experiment_report a
+		<include refid="experimentReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByTeacher" resultType="ExperimentReport" >
+		SELECT 
+			<include refid="experimentReportColumns"/>
+		FROM experiment_report a
+		<include refid="experimentReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			 <if test="experimentReportName != null and experimentReportName != ''">
+				AND a.experiment_report_name = #{experimentReportName}
+			</if>
+			AND a.user_type = '1' OR a.user_type = '2' 
+			AND a.backup_fieldc = #{createBy.phone}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByStudent" resultType="ExperimentReport" >
+		SELECT 
+			<include refid="experimentReportColumns"/>
+		FROM experiment_report a
+		<include refid="experimentReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="experimentReportName != null and experimentReportName != ''">
+				AND a.experiment_report_name = #{experimentReportName}
+			</if>
+			AND a.user_type = '3'
+			AND a.backup_fieldc = #{createBy.phone} 
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findUniqueStudentExperimentReport" resultType="ExperimentReport" >
+		SELECT 
+			<include refid="experimentReportColumns"/>
+		FROM experiment_report a
+		<include refid="experimentReportJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.experiment_report_name = #{experimentReportName}
+			AND a.backup_fieldc = #{createBy.phone}
+			AND a.create_by = #{createBy.id}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<insert id="insert">
+		INSERT INTO experiment_report(
+			id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag,
+			experiment_report_name,
+			experiment_report_path,
+			score,
+			end_time,
+			user_type,
+			backup_fielda,
+			backup_fieldb,
+			backup_fieldc,
+			remarks
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{experimentReportName},
+			#{experimentReportPath},
+			#{score},
+			#{endTime},
+			#{createBy.userType},
+			#{backupFielda},
+			#{backupFieldb},
+			#{createBy.phone},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE experiment_report SET 	
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			experiment_report_name = #{experimentReportName},
+			experiment_report_path = #{experimentReportPath},
+			score = #{score},
+			end_time = #{endTime},
+			user_type = #{createBy.userType},
+			backup_fielda = #{backupFielda},
+			backup_fieldb = #{backupFieldb},
+			backup_fieldc = #{createBy.phone},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM experiment_report
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE experiment_report SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="ExperimentReport" statementType="STATEMENT">
+		select * FROM experiment_report  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

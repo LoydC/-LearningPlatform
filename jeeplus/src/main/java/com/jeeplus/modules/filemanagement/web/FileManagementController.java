@@ -184,9 +184,7 @@ public class FileManagementController extends BaseController {
 		List<CourseFile> cfList = cf.getChildren().get(0).getChildren();
 		//Collections.sort();
 		String jsonString = JSON.toJSONString(cfList);  
-
-		System.out.println(jsonString);
-		
+	
 		/******************结束**************/
 		
         model.addAttribute("nodeJson", jsonString);

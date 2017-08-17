@@ -237,9 +237,6 @@ function menuItem() {
     return false;
 }
 
-
-
-
 // 关闭选项卡菜单
 function closeTab() {
     var closeTabId = $(this).parents('.J_menuTab').data('id');

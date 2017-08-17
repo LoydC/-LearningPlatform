@@ -24,7 +24,7 @@
 <body class="gray-bg">
 
 		<div class="row">
-			<div class="col-lg-8">
+			<div class="col-lg-12">
 				<div class="ibox ">
 					<div class="ibox-title">
 						<h5>文件树</h5>
@@ -104,7 +104,7 @@
             		"rename":null,  
             		"remove":null,  
             		"ccp":null,  
-            		"新建菜单":{  
+            		/* "新建菜单":{  
                 		"label":"下载",  
                 		"action":function(data){  
                     		
@@ -123,7 +123,7 @@
 					        }
 
                 		} 
-            		}/* ,  
+            		} *//* ,  
             		"删除菜单":{  
                 		"label":"删除菜单",  
                 		"action":function(data){  
@@ -155,13 +155,17 @@
 			$('#using_json').on("changed.jstree", function (e, data) {
         		var videoPath = data.instance.get_path(data.selected[0],"/",0);
 		        var fileExtension = videoPath.substring(videoPath.lastIndexOf('.') + 1);
-		        consoel.log(data);
-				if(fileExtension == 'mp4'){
-		        	var url = '${ctx}/video?videoPath=' + videoPath;
-			        url = encodeURI(encodeURI(url));		        
-			        //parent.parentMenuItem(url,"视频播放");
-			        parent.openTab(url,"视频播放",false);
-		        } 
+		        var videoId = data.node.id;
+
+		        if(data.node.children.length==0){
+		        	if(fileExtension == 'mp4'){
+		        		var url = '${ctx}/video/form?videoId=' + videoId;
+		        		parent.openVideoResourceDialog("查看视频",url,"400px", "560px");
+			        }else{
+			        	 var url = '${ctx}/filemanagement/educationResource/downloadForm?id=' + videoId;
+			        	 parent.openNotVideoResourceDialog("查看资源",url,"400px", "560px");
+			        }		        	       
+		        }
 
       		})  
 			//

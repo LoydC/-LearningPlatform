@@ -2,7 +2,7 @@
 <%@ include file="/webpage/include/taglib.jsp"%>
 <html>
 <head>
-	<title>学生报告单记录管理</title>
+	<title>预习报告单管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		var validateForm;
@@ -31,6 +31,14 @@
 				}
 			});
 			
+					laydate({
+			            elem: '#endTime', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+			            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
+			        });
+			      var temp = parent.getActiveTabName()[0].innerText;
+			        if(temp=="查看预习报告单 "){
+			        	document.getElementById("submitbuttonrepo").style.display="none";
+			        }
 		});
 		function addRow(list, idx, tpl, row){
 			$(list).append(Mustache.render(tpl, {
@@ -66,21 +74,37 @@
 	</script>
 </head>
 <body class="hideScroll">
-	<form:form id="inputForm" modelAttribute="reportForm" action="${ctx}/preview/reportForm/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="reportForm" action="${ctx}/preview/reportForm/studentSave" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>	
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 				<tr>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>任务单de名称：</label></td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>任务单名称：</label></td>
 					<td class="width-35">
-						<form:input path="reportFormNum" htmlEscape="false"    class="form-control required"/>
+						<form:input path="reportFormNum" htmlEscape="false"    class="form-control required" readonly="true"/>
 					</td>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>学习内容：</label></td>
 					<td class="width-35">
-						<form:textarea path="learningContent" htmlEscape="false" rows="4"    class="form-control required"/>
+						<form:textarea path="learningContent" htmlEscape="false" rows="4"    class="form-control required" readonly="true"/>
 					</td>
 				</tr>
+
+				<tr>
+					<td class="width-15 active"><label class="pull-right">预习报告单成绩：</label></td>
+					<td class="width-35">
+						<form:select path="score" class="form-control " disabled="true">
+							<form:option value="" label=""/>
+							<form:options items="${fns:getDictList('preview_score')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select>
+					</td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>预习报告截止提交时间：</label></td>
+					<td class="width-35">
+						<input id="endTime" name="endTime" type="text" maxlength="20" class="laydate-icon form-control layer-date " readonly="true" value="<fmt:formatDate value="${reportForm.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
+					</td>
+					<td class="width-15 active"></td>
+		   			<td class="width-35" ></td>
+		  		</tr>
 		 	</tbody>
 		</table>
 		
@@ -99,8 +123,8 @@
             </ul>
             <div class="tab-content">
 				<div id="tab-1" class="tab-pane active">
-			<a class="btn btn-white btn-sm" onclick="addRow('#preclassDutyList', preclassDutyRowIdx, preclassDutyTpl);preclassDutyRowIdx = preclassDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
-			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+				<!--<a class="btn btn-white btn-sm" onclick="addRow('#preclassDutyList', preclassDutyRowIdx, preclassDutyTpl);preclassDutyRowIdx = preclassDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			--><table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 					<tr>
 						<th class="hide"></th>
@@ -121,19 +145,17 @@
 						<input id="preclassDutyList{{idx}}_delFlag" name="preclassDutyList[{{idx}}].delFlag" type="hidden" value="0"/>
 					</td>
 					
-					<td  class="max-width-250">
-            			<sys:treeselect id="preclassDutyList{{idx}}_learningResource" name="preclassDutyList[{{idx}}].learningResource.id" value="{{row.learningResource.id}}" 
-							labelName="preclassDutyList{{idx}}.learningResource.resourceName" labelValue="{{row.learningResource.resourceName}}"
-              				title="用户" url="/preview/reportForm/treeData?type=3" cssClass="form-control  required" notAllowSelectParent="true" checked="true"/>
+					<td>
+            			<textarea id="preclassDutyList{{idx}}_learningResourceText" name="preclassDutyList[{{idx}}].learningResourceText" rows="4"    class="form-control required" readonly="true">{{row.learningResourceText}}</textarea>
           			</td>
 					
 					<td>
-						<textarea id="preclassDutyList{{idx}}_learningTarget" name="preclassDutyList[{{idx}}].learningTarget" rows="4"    class="form-control required">{{row.learningTarget}}</textarea>
+						<textarea id="preclassDutyList{{idx}}_learningTarget" name="preclassDutyList[{{idx}}].learningTarget" rows="4"    class="form-control required" readonly="true">{{row.learningTarget}}</textarea>
 					</td>
 					
-					
+		
 					<td>
-						<textarea id="preclassDutyList{{idx}}_questionAndThinking" name="preclassDutyList[{{idx}}].questionAndThinking" rows="4"    class="form-control required">{{row.questionAndThinking}}</textarea>
+						<textarea id="preclassDutyList{{idx}}_questionAndThinking" name="preclassDutyList[{{idx}}].questionAndThinking" rows="4"    class="form-control required" readonly="true">{{row.questionAndThinking}}</textarea>
 					</td>
 					
 					
@@ -158,12 +180,12 @@
 			</script>
 			</div>
 				<div id="tab-2" class="tab-pane">
-			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
-			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+			<!--  <a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			--><table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 					<tr>
 						<th class="hide"></th>
-						<th>tuo'zh</th>
+						<th>实习任务</th>
 						<th>内容与目标</th>
 						<th>疑问</th>
 						<th width="10">&nbsp;</th>
@@ -180,12 +202,12 @@
 					</td>
 					
 					<td>
-						<textarea id="prepracticeDutyList{{idx}}_prepracticeDuty" name="prepracticeDutyList[{{idx}}].prepracticeDuty" rows="4"    class="form-control required">{{row.prepracticeDuty}}</textarea>
+						<textarea id="prepracticeDutyList{{idx}}_prepracticeDuty" name="prepracticeDutyList[{{idx}}].prepracticeDuty" rows="4"    class="form-control required" readonly="true">{{row.prepracticeDuty}}</textarea>
 					</td>
 					
 					
 					<td>
-						<textarea id="prepracticeDutyList{{idx}}_contentAndTarget" name="prepracticeDutyList[{{idx}}].contentAndTarget" rows="4"    class="form-control required">{{row.contentAndTarget}}</textarea>
+						<textarea id="prepracticeDutyList{{idx}}_contentAndTarget" name="prepracticeDutyList[{{idx}}].contentAndTarget" rows="4"    class="form-control required" readonly="true">{{row.contentAndTarget}}</textarea>
 					</td>
 					
 					
@@ -210,8 +232,8 @@
 			</script>
 			</div>
 				<div id="tab-3" class="tab-pane">
-			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
-			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+			<!-- <a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			--><table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 					<tr>
 						<th class="hide"></th>
@@ -224,7 +246,7 @@
 					
 					
 					<td>
-						<form:textarea path="expandResources" htmlEscape="false" rows="4"    class="form-control "/>
+						<form:textarea path="expandResources" htmlEscape="false" rows="4"    class="form-control " readonly="true"/>
 					</td>
 					</tr>
 				</tbody>
@@ -232,8 +254,8 @@
 
 			</div>
 			<div id="tab-4" class="tab-pane">
-			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
-			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+			<!-- <a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			--><table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 					<tr>
 						<th class="hide"></th>
@@ -246,7 +268,7 @@
 					
 					
 					<td>
-						<form:textarea path="discussionTopic" htmlEscape="false" rows="4"    class="form-control "/>
+						<form:textarea path="discussionTopic" htmlEscape="false" rows="4"    class="form-control " readonly="true"/>
 					</td>
 					</tr>
 				</tbody>
@@ -254,8 +276,8 @@
 
 			</div>
 			<div id="tab-5" class="tab-pane">
-			<a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
-			<table id="contentTable" class="table table-striped table-bordered table-condensed">
+			<!--  <a class="btn btn-white btn-sm" onclick="addRow('#prepracticeDutyList', prepracticeDutyRowIdx, prepracticeDutyTpl);prepracticeDutyRowIdx = prepracticeDutyRowIdx + 1;" title="新增"><i class="fa fa-plus"></i> 新增</a>
+			--><table id="contentTable" class="table table-striped table-bordered table-condensed">
 				<thead>
 					<tr>
 						<th class="hide"></th>
@@ -269,6 +291,8 @@
 				</thead>
 				<tbody id="prepracticeDuty">
 					<tr>
+					
+					
 					<td>
 						<form:select path="spendTime" class="form-control ">
 							<form:option value="" label=""/>
@@ -297,115 +321,15 @@
 				</tbody>
 			</table>
 
-			</div>
+			</div>			
+			
+			<button class="btn btn-primary btn-rounded"  type="submit"  style="float:right;display:block;" id="submitbuttonrepo" >提交预习报告单</button>
 		</div>
-		<input type="submit" value="提交"/>
+		
+		
+		
 		</div>
 	</form:form>
-	<!-- <table border="1" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
-     <script>
-        var reportData={
-			id:"0fef607088024832bf781cf0f8d4bddf",
-			leaningcontent:"看视频，看文档，等等",
-			preclassDutyList:[
-				{
-					learningResource:"s10101001信息",
-					learningTarget:"理解",
-					questionAndThinking:"问题",
-					doubt:"",
-				},
-				{
-					learningResource:"s10101001信息",
-					learningTarget:"理解",
-					questionAndThinking:"问题",
-					doubt:"",
-				}
-			],
-			prepracticeDutyList:[
-				{
-					practiceDuty:"信息检索",
-					contentAndTarget:"",
-					doubt:""
-				},
-				{
-					practiceDuty:"信息检索",
-					contentAndTarget:"",
-					doubt:""
-				}
-			],
-				spendTime:"",
-				learnDifficulty:"",
-				learnTarget:"",
-				existProblem:"",
-				advice:""
-	}
-        var s = '';         
-            if (reportData.id ){
-                s += '<tr><th>任务单编号</th><th>' + reportData.id 
-                + '</th><th>学习内容</th><th colspan="2">'+reportData.leaningcontent+'</th></tr>';
-            }
-            	s += '<tr><th colspan="5">课前学习任务</th></tr><tr><th>学习资源</th><th>学习目标</th><th colspan="2">问题与思考</th><th>疑问</th></tr>';
-            	if(reportData.leaningData.length>0){
-            		for(var i = 0; i < reportData.leaningData.length; i++){
-            			s += '<tr><th>'
-            			+ reportData.leaningData[i].learningResource + '</th><th>'
-            			+ reportData.leaningData[i].learningTarget + '</th><th colspan="2">'
-            			+ reportData.leaningData[i].questionAndThinking + '</th><th>'
-            			+ reportData.leaningData[i].doubt 
-            			+ '</th></tr>'
-            		}           	
-            	}
-            	s += '<tr><th colspan="5">实习前学习任务</th></tr><tr><th>实习任务</th><th colspan="3">内容与目标</th><th>疑问</th></tr>';
-            	if(reportData.practiceDutyData.length>0){
-            		for(var i = 0; i < reportData.practiceDutyData.length; i++){
-            			s += '<tr><th>'
-            			+ reportData.practiceDutyData[i].practiceDuty + '</th><th colspan="3">'
-            			+ reportData.practiceDutyData[i].contentAndTarget + '</th><th>'
-            			+ reportData.practiceDutyData[i].doubt 
-            			+ '</th></tr>'            	        	
-            	}
-            	s += '<tr><th colspan="5">学习反馈</th></tr><tr><th>学习花费时间</th><th>学习难度</th><th>学习目标完成度</th><th>存在问题</th><th>建议</th></tr>';
-            	s += '<tr><th>'
-            			+ reportData.learningfeedbackData.spendTime + '</th><th>'
-            			+ reportData.learningfeedbackData.learnDifficulty + '</th><th>'
-            			+ reportData.learningfeedbackData.learnTarget + '</th><th>'
-            			+ reportData.learningfeedbackData.existProblem + '</th><th>'
-            			+ reportData.learningfeedbackData.advice
-            			+ '</th></tr>'            	         
-            }
-              document.write(s);
-    </script>  -->
-<!-- </table>
-<select id="grade">
-  <option value="A">A</option>
-  <option value="B">B</option>
-  <option value="C">C</option>
-  <option value="D">D</option>
-</select>
-<button type="submit" onclick="previewsubmit()">提交</button>
-<script type="text/javascript">
-	function previewsubmit(){
-	alert(reportData);
-	var grade = $('#grade option:selected').val();
-	reportData.advice = grade;
-	alert(grade);
-	
-			$.ajax({
-					type : 'POST',
-					url: '${ctx}/preview/reportForm/correctstudentsforms',
-					headers:{
-					},
-					data:reportData,
-					contentType : 'application/json;charset=utf-8',
-					dataType : 'json',
-					success : function(){
-						
-						alert("保存成功");
-					}
-				})
-				}
-	
-</script> -->
 
 </body>
 </html>
